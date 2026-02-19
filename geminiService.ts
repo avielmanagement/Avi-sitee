@@ -1,44 +1,35 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { AiConsultationResponse } from "./types";
-
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
-const ai = new GoogleGenAI({ apiKey });
+import type { AiConsultationResponse } from "../types";
 
 const consultationSchema: Schema = {
   type: Type.OBJECT,
   properties: {
-    summary: {
-      type: Type.STRING,
-      description: "A professional summary of the user's renovation or installation request.",
-    },
-    estimatedTier: {
-      type: Type.STRING,
-      enum: ["Budget", "Standard", "Premium", "Luxury"],
-      description: "The likely tier of the project based on description complexity.",
-    },
-    recommendation: {
-      type: Type.STRING,
-      description: "A strategic recommendation for the next step (e.g., site visit, blueprint review).",
-    },
+    summary: { type: Type.STRING },
+    estimatedTier: { type: Type.STRING, enum: ["Budget", "Standard", "Premium", "Luxury"] },
+    recommendation: { type: Type.STRING },
   },
   required: ["summary", "estimatedTier", "recommendation"],
 };
 
-export const analyzeProjectRequest = async (
+export async function analyzeProjectRequest(
   description: string,
   type: "renovation" | "ev"
-): Promise<AiConsultationResponse | null> => {
+): Promise<AiConsultationResponse> {
+  // ✅ Vite env (must start with VITE_)
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+
+  // ✅ HARD fallback: never throw
   if (!apiKey) {
-    console.warn("No API Key provided for Gemini.");
     return {
-      summary: "API Key missing. Please provide details manually.",
+      summary: "AI estimate is temporarily unavailable.",
       estimatedTier: "Standard",
-      recommendation: "Contact us directly.",
+      recommendation: "Submit the form and we’ll follow up ASAP.",
     };
   }
 
   try {
-    const modelId = "gemini-2.5-flash-preview-09-2025";
+    // ✅ Only create the client when we have a key
+    const ai = new GoogleGenAI({ apiKey });
 
     const systemInstruction =
       type === "renovation"
@@ -46,7 +37,7 @@ export const analyzeProjectRequest = async (
         : "You are a specialist electrician for EZ EV Installations. Analyze the user's EV charger installation request.";
 
     const response = await ai.models.generateContent({
-      model: modelId,
+      model: "gemini-2.5-flash",
       contents: description,
       config: {
         systemInstruction,
@@ -57,9 +48,15 @@ export const analyzeProjectRequest = async (
     });
 
     const text = response.text;
-    return text ? (JSON.parse(text) as AiConsultationResponse) : null;
-  } catch (error) {
-    console.error("Gemini analysis failed:", error);
-    return null;
+    if (!text) throw new Error("Empty Gemini response");
+
+    return JSON.parse(text) as AiConsultationResponse;
+  } catch (err) {
+    console.error("Gemini failed, returning fallback:", err);
+    return {
+      summary: "AI estimate is temporarily unavailable.",
+      estimatedTier: "Standard",
+      recommendation: "Submit the form and we’ll follow up ASAP.",
+    };
   }
-};
+}
