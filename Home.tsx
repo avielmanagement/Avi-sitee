@@ -17,7 +17,7 @@ const Home: React.FC = () => {
 
      {/* HERO SECTION */}
 <section
-  className="relative w-full flex items-center justify-center overflow-hidden perspective-[2000px]"
+  <section className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden perspective-[2000px]">
   style={{
     paddingTop: 'calc(env(safe-area-inset-top) + 64px)', // 64px navbar
     minHeight: '100vh',
