@@ -1,14 +1,14 @@
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import EzEvPage from './pages/EzEvPage';
-import JunkDemoPage from './pages/JunkDemoPage';
-import RoofingPage from './pages/RoofingPage';
-import GeneralConstructionPage from './pages/GeneralConstructionPage';
-import ServiceAreas from './pages/ServiceAreas';
-import About from './pages/About';
-import GetQuote from './pages/GetQuote';
-import StickyCursor from './components/StickyCursor';
+import Home from './Home';
+import EzEvPage from './EzEvPage';
+import JunkDemoPage from './JunkDemoPage';
+import RoofingPage from './RoofingPage';
+import GeneralConstructionPage from './GeneralConstructionPage';
+import ServiceAreas from './ServiceAreas';
+import About from './About';
+import GetQuote from './GetQuote';
+import StickyCursor from './StickyCursor';
 import { PageRoute } from './types';
 
 const App: React.FC = () => {
