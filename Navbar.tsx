@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Zap, Hammer, ChevronDown, PhoneCall } from 'lucide-react';
-import { PageRoute } from '../types';
+import { PageRoute } from './types';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
