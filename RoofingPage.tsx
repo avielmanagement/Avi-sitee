@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Home, Droplets, Shield, PenTool } from 'lucide-react';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import { Home, Droplets, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PageRoute } from '../types';
+import { PageRoute } from './types';
 
 const RoofingPage: React.FC = () => {
   useEffect(() => {
@@ -17,9 +17,9 @@ const RoofingPage: React.FC = () => {
       {/* HERO */}
       <section className="relative h-[70vh] flex items-center justify-center">
         <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1632759145351-1d592919f522?q=80&w=2070&auto=format&fit=crop" 
-            alt="Roofing Work NYC" 
+          <img
+            src="https://images.unsplash.com/photo-1632759145351-1d592919f522?q=80&w=2070&auto=format&fit=crop"
+            alt="Roofing Work NYC"
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black" />
@@ -32,10 +32,16 @@ const RoofingPage: React.FC = () => {
             Expert flat roof repair, shingle replacement, and waterproofing for NYC properties.
           </p>
           <div className="flex justify-center gap-4">
-            <Link to={PageRoute.GET_QUOTE} className="px-8 py-4 bg-brand-gold text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">
+            <Link
+              to={PageRoute.GET_QUOTE}
+              className="px-8 py-4 bg-brand-gold text-black font-bold uppercase tracking-widest hover:bg-white transition-colors"
+            >
               Request Inspection
             </Link>
-            <a href="tel:5168067923" className="px-8 py-4 border border-white text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+            <a
+              href="tel:5168067923"
+              className="px-8 py-4 border border-white text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            >
               Emergency Leak? Call Now
             </a>
           </div>
@@ -63,7 +69,7 @@ const RoofingPage: React.FC = () => {
             <Shield className="w-12 h-12 text-green-500 mb-6" />
             <h3 className="font-display text-2xl uppercase mb-4">Maintenance & Coatings</h3>
             <p className="text-gray-400">
-              Extend your roof's lifespan with reflective silver coating (Cool Roof) and regular drain cleaning maintenance packages.
+              Extend your roof&apos;s lifespan with reflective silver coating (Cool Roof) and regular drain cleaning maintenance packages.
             </p>
           </div>
         </div>
@@ -71,30 +77,30 @@ const RoofingPage: React.FC = () => {
 
       {/* TRUST SECTION */}
       <section className="py-20 bg-zinc-100 text-black">
-         <div className="max-w-5xl mx-auto px-6 text-center">
-            <h2 className="font-display text-4xl uppercase mb-8">Why NYC Property Owners Trust Aviel</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-               <div>
-                 <div className="font-bold text-3xl mb-2">10+</div>
-                 <div className="text-sm uppercase text-gray-600">Years Experience</div>
-               </div>
-               <div>
-                 <div className="font-bold text-3xl mb-2">Licensed</div>
-                 <div className="text-sm uppercase text-gray-600">Home Improvement Contractor</div>
-               </div>
-               <div>
-                 <div className="font-bold text-3xl mb-2">Warranty</div>
-                 <div className="text-sm uppercase text-gray-600">On Full Replacements</div>
-               </div>
-               <div>
-                 <div className="font-bold text-3xl mb-2">Insured</div>
-                 <div className="text-sm uppercase text-gray-600">General Liability & Workers Comp</div>
-               </div>
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <h2 className="font-display text-4xl uppercase mb-8">Why NYC Property Owners Trust Aviel</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <div className="font-bold text-3xl mb-2">10+</div>
+              <div className="text-sm uppercase text-gray-600">Years Experience</div>
             </div>
-            <p className="mt-12 text-xs text-gray-500 max-w-2xl mx-auto">
-              Disclaimer: All roofing services performed by qualified tradespeople in accordance with NYC Building Codes. Warranties subject to maintenance terms.
-            </p>
-         </div>
+            <div>
+              <div className="font-bold text-3xl mb-2">Licensed</div>
+              <div className="text-sm uppercase text-gray-600">Home Improvement Contractor</div>
+            </div>
+            <div>
+              <div className="font-bold text-3xl mb-2">Warranty</div>
+              <div className="text-sm uppercase text-gray-600">On Full Replacements</div>
+            </div>
+            <div>
+              <div className="font-bold text-3xl mb-2">Insured</div>
+              <div className="text-sm uppercase text-gray-600">General Liability & Workers Comp</div>
+            </div>
+          </div>
+          <p className="mt-12 text-xs text-gray-500 max-w-2xl mx-auto">
+            Disclaimer: All roofing services performed by qualified tradespeople in accordance with NYC Building Codes. Warranties subject to maintenance terms.
+          </p>
+        </div>
       </section>
 
       <Footer />
