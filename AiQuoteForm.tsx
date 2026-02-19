@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { analyzeProjectRequest } from '../services/geminiService';
+import { analyzeProjectRequest } from "./geminiService";
 import { Loader2, Send, Sparkles } from 'lucide-react';
 import { AiConsultationResponse } from '../types';
 
