@@ -69,9 +69,10 @@ const ServiceAreas: React.FC = () => {
         </a>
       </section>
 
-      <Footer />
+        <Footer />
     </div>
   );
 };
 
-export defa
+export default ServiceAreas;
+
