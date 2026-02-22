@@ -42,10 +42,10 @@ const JunkDemoPage: React.FC = () => {
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <a
-              href="tel:5168067923"
+               href="tel:+19172755796"
               className="px-8 py-4 bg-orange-600 hover:bg-orange-500 text-white font-bold uppercase tracking-widest transition-all shadow-lg"
             >
-              Call Now: (516) 806-7923
+              Call Now: (917) 275-5796
             </a>
             <Link
               to={PageRoute.GET_QUOTE}
