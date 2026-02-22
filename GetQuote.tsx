@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { Send, Phone, User, Mail, FileText, Zap, DollarSign, ShieldCheck } from 'lucide-react';
+import { Send, Phone, User, Mail, FileText, Zap, DollarSign, ShieldCheck, PhoneCall } from 'lucide-react';
+
+const COMPANY_PHONE_DISPLAY = '(917) 275-5796';
+const COMPANY_PHONE_TEL = '+19172755796';
 
 const GetQuote: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -31,12 +34,29 @@ const GetQuote: React.FC = () => {
         <div className="flex-grow flex items-center justify-center px-4">
           <div className="text-center max-w-2xl animate-fade-in-up border border-white/10 p-12 bg-zinc-900/50 backdrop-blur-sm">
             <h1 className="font-display text-5xl md:text-6xl text-brand-gold mb-6 uppercase">Request Received</h1>
+
             <p className="text-white text-xl mb-8 font-light">
               Thank you, <span className="font-bold">{formData.name}</span>. We have received your project details.
-              One of our project managers will call you at <span className="text-brand-gold">{formData.phone}</span> shortly to discuss your free estimate.
+              One of our project managers will call you at{' '}
+              <span className="text-brand-gold">{formData.phone}</span> shortly to discuss your free estimate.
             </p>
+
+            {/* Optional: fast call fallback */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+              <a
+                href={`tel:${COMPANY_PHONE_TEL}`}
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-gold text-black font-bold uppercase tracking-widest hover:bg-white transition-colors"
+              >
+                <PhoneCall className="w-5 h-5" />
+                Call Now: {COMPANY_PHONE_DISPLAY}
+              </a>
+            </div>
+
             <button
-              onClick={() => { setSubmitted(false); setFormData({ name: '', phone: '', email: '', description: '' }); }}
+              onClick={() => {
+                setSubmitted(false);
+                setFormData({ name: '', phone: '', email: '', description: '' });
+              }}
               className="text-gray-400 hover:text-white underline uppercase tracking-widest text-sm"
             >
               Submit another request
@@ -119,7 +139,16 @@ const GetQuote: React.FC = () => {
         <div className="lg:w-1/2 px-6 py-12 md:p-24 flex flex-col justify-center bg-brand-dark relative z-10 pt-24 lg:pt-24">
           <div className="max-w-lg mx-auto w-full">
             <h1 className="font-display text-4xl md:text-5xl text-white uppercase mb-2">Start the Conversation</h1>
-            <p className="text-gray-400 mb-10 text-lg">We respond within a few hours.</p>
+            <p className="text-gray-400 mb-6 text-lg">We respond within a few hours.</p>
+
+            {/* NEW: phone CTA */}
+            <a
+              href={`tel:${COMPANY_PHONE_TEL}`}
+              className="inline-flex items-center gap-2 mb-10 text-brand-gold font-bold uppercase tracking-widest text-sm hover:text-white transition-colors"
+            >
+              <PhoneCall className="w-4 h-4" />
+              Call {COMPANY_PHONE_DISPLAY}
+            </a>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
@@ -196,6 +225,9 @@ const GetQuote: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* IMPORTANT: Footer was missing before. Add it back so page matches others */}
+      <Footer />
     </div>
   );
 };
