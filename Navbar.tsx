@@ -107,7 +107,7 @@ const Navbar: React.FC = () => {
             Service Areas
           </Link>
 
-          <a href="tel:5168067923" className="flex items-center gap-2 text-brand-green">
+          <a href="tel:+19172755796" className="flex items-center gap-2 text-brand-green">
             <PhoneCall className="w-4 h-4" /> <span className="hidden lg:inline">(516) 806-7923</span>
           </a>
 
