@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
             <li>info@avielmanagement.com</li>
             <li>(917) 275-5796</li>
             <li>New York City</li>
-            <li>and nearby</li>
+            <li>And Nearby</li>
           </ul>
         </div>
       </div>
