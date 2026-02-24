@@ -42,7 +42,7 @@ const GetQuote: React.FC = () => {
       setSubmitted(true);
     } else {
       alert("Failed to send quote");
-    }
+      
   } catch (error) {
     console.error(error);
     alert("Something went wrong");
