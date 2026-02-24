@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import { Send, Phone, User, Mail, FileText, Zap, DollarSign, ShieldCheck, PhoneCall } from 'lucide-react';
 
-const COMPANY_PHONE_DISPLAY = '(917) 275-5796';
+const COMPANY_PHONE_DISPLAY = '(917) 275-5796'; 
 const COMPANY_PHONE_TEL = '+19172755796';
 
 const GetQuote: React.FC = () => {
@@ -33,23 +33,17 @@ const GetQuote: React.FC = () => {
   }
 };
 
-  try {
-    await fetch("https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/bfe95309-c2da-429c-ae81-d7434a8bc719", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        description: formData.description,
-        source: "Website Quote Form"
-      }),
-    });
 
-    setSubmitted(true);
-
+    if (res.ok) {
+      setSubmitted(true);
+    } else {
+      alert("Failed to send quote");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong");
+  }
+};
   } catch (err) {
     console.error("Webhook error:", err);
   }
