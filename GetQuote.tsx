@@ -19,7 +19,7 @@ const GetQuote: React.FC = () => {
   e.preventDefault();
 
   try {
-    await fetch("PASTE_YOUR_GHL_WEBHOOK_URL_HERE", {
+    await fetch("https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/acefe57e-1222-465f-b7cc-6f7086021f15", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
