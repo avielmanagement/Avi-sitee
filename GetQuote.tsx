@@ -40,7 +40,7 @@ const GetQuote: React.FC = () => {
     e.preventDefault();
 
     if (!GHL_WEBHOOK_URL || GHL_WEBHOOK_URL === 'YOUR_GHL_WEBHOOK_URL_HERE') {
-      alert('You must paste your GoHighLevel webhook URL into GetQuote.tsx');
+      alert('https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246');
       return;
     }
 
