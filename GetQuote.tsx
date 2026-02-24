@@ -15,13 +15,30 @@ const GetQuote: React.FC = () => {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simulate API call or form submission logic
-    setTimeout(() => {
-      setSubmitted(true);
-    }, 800);
-  };
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    await fetch("PASTE_YOUR_GHL_WEBHOOK_URL_HERE", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        description: formData.description,
+        source: "Website Quote Form"
+      }),
+    });
+
+    setSubmitted(true);
+
+  } catch (err) {
+    console.error("Webhook error:", err);
+  }
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
