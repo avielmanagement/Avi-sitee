@@ -19,7 +19,7 @@ const GetQuote: React.FC = () => {
   e.preventDefault();
 
   try {
-    await fetch("https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/acefe57e-1222-465f-b7cc-6f7086021f15", {
+    await fetch("https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/bfe95309-c2da-429c-ae81-d7434a8bc719", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
