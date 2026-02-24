@@ -19,12 +19,16 @@ const GetQuote: React.FC = () => {
   e.preventDefault();
 
   try {
-    const res = await fetch("/api/quote", {
+    const res = await fetch("YOUR_GHL_WEBHOOK_URL_HERE", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        description: formData.description,
+        source: "Website Quote Form",
+      }),
     });
 
     if (res.ok) {
