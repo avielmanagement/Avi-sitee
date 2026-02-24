@@ -18,21 +18,25 @@ const GetQuote: React.FC = () => {
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
-  const res = await fetch("/api/quote", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
+  try {
+    const res = await fetch("/api/quote", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-  if (res.ok) {
-    setSubmitted(true);
-  } else {
-    alert("Failed to send quote");
+    if (res.ok) {
+      setSubmitted(true);
+    } else {
+      alert("Failed to send quote");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong");
   }
 };
-
 
     if (res.ok) {
       setSubmitted(true);
