@@ -18,6 +18,21 @@ const GetQuote: React.FC = () => {
  const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
 
+  const res = await fetch("/api/quote", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+
+  if (res.ok) {
+    setSubmitted(true);
+  } else {
+    alert("Failed to send quote");
+  }
+};
+
   try {
     await fetch("https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/bfe95309-c2da-429c-ae81-d7434a8bc719", {
       method: "POST",
