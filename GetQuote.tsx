@@ -1,23 +1,10 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import {
-  Send,
-  Phone,
-  User,
-  Mail,
-  FileText,
-  Zap,
-  DollarSign,
-  ShieldCheck,
-  PhoneCall,
-} from 'lucide-react';
+import { Send, Phone, User, Mail, FileText, Zap, DollarSign, ShieldCheck, PhoneCall } from 'lucide-react';
 
 const COMPANY_PHONE_DISPLAY = '(917) 275-5796';
 const COMPANY_PHONE_TEL = '+19172755796';
-
-// ✅ Replace this with your actual GoHighLevel Inbound Webhook URL
-const GHL_WEBHOOK_URL = 'YOUR_GHL_WEBHOOK_URL_HERE';
 
 const GetQuote: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -28,51 +15,43 @@ const GetQuote: React.FC = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const [isSending, setIsSending] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!GHL_WEBHOOK_URL || GHL_WEBHOOK_URL === 'YOUR_GHL_WEBHOOK_URL_HERE') {
-      alert('https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246');
-      return;
-    }
-
-    setIsSending(true);
+    setLoading(true);
 
     try {
-      const payload = {
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        description: formData.description,
-        source: 'Website Quote Form',
-        page: 'GetQuote',
-        timestamp: new Date().toISOString(),
-      };
-
-      const res = await fetch(GHL_WEBHOOK_URL, {
+      const res = await fetch('/api/quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          description: formData.description,
+          source: 'Website Quote Form',
+          page: 'GetQuote',
+        }),
       });
 
       if (!res.ok) {
-        throw new Error(`Webhook failed: ${res.status} ${res.statusText}`);
+        const text = await res.text().catch(() => '');
+        console.error('API Error:', res.status, text);
+        alert('Failed to send quote. Please try again.');
+        return;
       }
 
       setSubmitted(true);
-    } catch (error) {
-      console.error('Quote submit error:', error);
-      alert('Something went wrong sending your quote. Please try again.');
+    } catch (err) {
+      console.error('Submit error:', err);
+      alert('Something went wrong. Please try again.');
     } finally {
-      setIsSending(false);
+      setLoading(false);
     }
   };
 
@@ -87,11 +66,8 @@ const GetQuote: React.FC = () => {
             </h1>
 
             <p className="text-white text-xl mb-8 font-light">
-              Thank you, <span className="font-bold">{formData.name}</span>. We
-              have received your project details. One of our project managers
-              will call you at{' '}
-              <span className="text-brand-gold">{formData.phone}</span> shortly
-              to discuss your free estimate.
+              Thank you, <span className="font-bold">{formData.name}</span>. We received your details.
+              We’ll call you at <span className="text-brand-gold">{formData.phone}</span> shortly.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
@@ -125,7 +101,7 @@ const GetQuote: React.FC = () => {
       <Navbar />
 
       <div className="flex-grow flex flex-col lg:flex-row relative">
-        {/* Left Side - Visuals & "Free Estimates" */}
+        {/* Left Side */}
         <div className="lg:w-1/2 relative min-h-[40vh] lg:min-h-screen">
           <img
             src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop"
@@ -137,36 +113,27 @@ const GetQuote: React.FC = () => {
           <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 pt-20">
             <div className="animate-fade-in-up">
               <div className="bg-brand-gold inline-block px-4 py-1 mb-4">
-                <span className="text-black font-bold uppercase tracking-widest text-sm">
-                  No Obligation
-                </span>
+                <span className="text-black font-bold uppercase tracking-widest text-sm">No Obligation</span>
               </div>
 
               <h2 className="font-display text-6xl md:text-8xl text-white uppercase mb-4 drop-shadow-xl leading-[0.9]">
-                Free<br />
-                <span className="text-brand-gold">Estimates</span>
+                Free<br /><span className="text-brand-gold">Estimates</span>
               </h2>
 
               <div className="w-24 h-1 bg-white mb-8" />
 
               <p className="text-gray-200 text-lg md:text-xl max-w-md font-light leading-relaxed mb-12">
-                Ready to bring your vision into reality? Tell us about your
-                project. We provide transparent, up-front pricing.
+                Ready to bring your vision into reality? Tell us about your project. Transparent, up-front pricing.
               </p>
 
-              {/* Key Benefits */}
               <div className="grid grid-cols-1 gap-6 max-w-md">
                 <div className="flex items-center gap-4 group">
                   <div className="w-12 h-12 rounded-full bg-brand-green/10 flex-shrink-0 flex items-center justify-center border border-brand-green/30 group-hover:bg-brand-green transition-colors duration-300">
                     <Zap className="text-brand-green w-6 h-6 group-hover:text-black transition-colors" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">
-                      Same Day EV Installations
-                    </h4>
-                    <p className="text-gray-400 text-xs">
-                      Available for standard setups.
-                    </p>
+                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">Same Day EV Installations</h4>
+                    <p className="text-gray-400 text-xs">Available for standard setups.</p>
                   </div>
                 </div>
 
@@ -175,12 +142,8 @@ const GetQuote: React.FC = () => {
                     <DollarSign className="text-brand-gold w-6 h-6 group-hover:text-black transition-colors" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">
-                      Best Price Guaranteed
-                    </h4>
-                    <p className="text-gray-400 text-xs">
-                      We beat competitor quotes.
-                    </p>
+                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">Best Price Guaranteed</h4>
+                    <p className="text-gray-400 text-xs">We beat competitor quotes.</p>
                   </div>
                 </div>
 
@@ -189,15 +152,12 @@ const GetQuote: React.FC = () => {
                     <ShieldCheck className="text-blue-400 w-6 h-6 group-hover:text-black transition-colors" />
                   </div>
                   <div>
-                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">
-                      Licensed & Insured
-                    </h4>
-                    <p className="text-gray-400 text-xs">
-                      Certified Master Electricians.
-                    </p>
+                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">Licensed & Insured</h4>
+                    <p className="text-gray-400 text-xs">Certified professionals.</p>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -205,12 +165,8 @@ const GetQuote: React.FC = () => {
         {/* Right Side - Form */}
         <div className="lg:w-1/2 px-6 py-12 md:p-24 flex flex-col justify-center bg-brand-dark relative z-10 pt-24 lg:pt-24">
           <div className="max-w-lg mx-auto w-full">
-            <h1 className="font-display text-4xl md:text-5xl text-white uppercase mb-2">
-              Start the Conversation
-            </h1>
-            <p className="text-gray-400 mb-6 text-lg">
-              We respond within a few hours.
-            </p>
+            <h1 className="font-display text-4xl md:text-5xl text-white uppercase mb-2">Start the Conversation</h1>
+            <p className="text-gray-400 mb-6 text-lg">We respond within a few hours.</p>
 
             <a
               href={`tel:${COMPANY_PHONE_TEL}`}
@@ -223,9 +179,7 @@ const GetQuote: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">
-                    Full Name
-                  </label>
+                  <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">Full Name</label>
                   <div className="relative group">
                     <User className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
                     <input
@@ -241,9 +195,7 @@ const GetQuote: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">
-                    Phone Number
-                  </label>
+                  <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">Phone Number</label>
                   <div className="relative group">
                     <Phone className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
                     <input
@@ -253,16 +205,14 @@ const GetQuote: React.FC = () => {
                       value={formData.phone}
                       onChange={handleChange}
                       className="w-full bg-zinc-900 border border-white/10 p-4 pl-12 text-white focus:border-brand-gold focus:bg-zinc-800 focus:outline-none transition-all placeholder:text-gray-600"
-                      placeholder="(555) 000-0000"
+                      placeholder="(917) 275-5796"
                     />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-gray-500 ml-1 font-bold">
-                  Email (Optional)
-                </label>
+                <label className="text-xs uppercase tracking-widest text-gray-500 ml-1 font-bold">Email (Optional)</label>
                 <div className="relative group">
                   <Mail className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
                   <input
@@ -277,9 +227,7 @@ const GetQuote: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">
-                  What needs to be done?
-                </label>
+                <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">What needs to be done?</label>
                 <div className="relative group">
                   <FileText className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
                   <textarea
@@ -288,19 +236,17 @@ const GetQuote: React.FC = () => {
                     value={formData.description}
                     onChange={handleChange}
                     className="w-full bg-zinc-900 border border-white/10 p-4 pl-12 text-white focus:border-brand-gold focus:bg-zinc-800 focus:outline-none transition-all placeholder:text-gray-600 min-h-[160px]"
-                    placeholder="Please describe your project needs, timeline, and any specific requirements..."
+                    placeholder="Describe your project needs..."
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                disabled={isSending}
-                className={`w-full bg-brand-gold text-black font-bold uppercase tracking-widest py-5 transition-all duration-300 flex items-center justify-center gap-3 mt-6 shadow-lg shadow-brand-gold/20 ${
-                  isSending ? 'opacity-70 cursor-not-allowed' : 'hover:bg-white hover:scale-[1.02]'
-                }`}
+                disabled={loading}
+                className="w-full bg-brand-gold text-black font-bold uppercase tracking-widest py-5 hover:bg-white hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 mt-6 shadow-lg shadow-brand-gold/20 disabled:opacity-60 disabled:hover:scale-100"
               >
-                {isSending ? 'Sending...' : 'Request Callback'} <Send className="w-5 h-5" />
+                {loading ? 'Sending...' : <>Request Callback <Send className="w-5 h-5" /></>}
               </button>
             </form>
           </div>
