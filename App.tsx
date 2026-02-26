@@ -10,6 +10,8 @@ import About from './About';
 import GetQuote from './GetQuote';
 import StickyCursor from './StickyCursor';
 import { PageRoute } from './types';
+import PrivacyPolicy from "./PrivacyPolicy";
+import Terms from "./Terms";
 
 const App: React.FC = () => {
   return (
