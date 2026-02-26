@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./Home";
 import EzEvPage from "./EzEvPage";
@@ -16,7 +16,7 @@ import Terms from "./Terms";
 
 const App: React.FC = () => {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <StickyCursor />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -28,11 +28,11 @@ const App: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/get-quote" element={<GetQuote />} />
 
-        {/* ✅ legal pages */}
+        {/* legal */}
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 
