@@ -1,38 +1,36 @@
-import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import React from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
 
-import Home from './Home';
-import EzEvPage from './EzEvPage';
-import JunkDemoPage from './JunkDemoPage';
-import RoofingPage from './RoofingPage';
-import GeneralConstructionPage from './GeneralConstructionPage';
-import ServiceAreas from './ServiceAreas';
-import About from './About';
-import GetQuote from './GetQuote';
-import StickyCursor from './StickyCursor';
+import Home from "./src/Home";
+import EzEvPage from "./src/EzEvPage";
+import JunkDemoPage from "./src/JunkDemoPage";
+import RoofingPage from "./src/RoofingPage";
+import GeneralConstructionPage from "./src/GeneralConstructionPage";
+import ServiceAreas from "./src/ServiceAreas";
+import About from "./src/About";
+import GetQuote from "./src/GetQuote";
+import StickyCursor from "./src/StickyCursor";
 
-import PrivacyPolicy from "./PrivacyPolicy";
-import Terms from "./Terms";
-
-import { PageRoute } from './types';
+import PrivacyPolicy from "./src/PrivacyPolicy";
+import Terms from "./src/Terms";
 
 const App: React.FC = () => {
   return (
     <HashRouter>
       <StickyCursor />
       <Routes>
-        <Route path={PageRoute.HOME} element={<Home />} />
-        <Route path={PageRoute.EZ_EV} element={<EzEvPage />} />
-        <Route path={PageRoute.JUNK_DEMO} element={<JunkDemoPage />} />
-        <Route path={PageRoute.ROOFING} element={<RoofingPage />} />
-        <Route path={PageRoute.GENERAL_CONSTRUCTION} element={<GeneralConstructionPage />} />
-        <Route path={PageRoute.SERVICE_AREAS} element={<ServiceAreas />} />
-        <Route path={PageRoute.ABOUT} element={<About />} />
-        <Route path={PageRoute.GET_QUOTE} element={<GetQuote />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/ez-ev" element={<EzEvPage />} />
+        <Route path="/junk-demo" element={<JunkDemoPage />} />
+        <Route path="/roofing" element={<RoofingPage />} />
+        <Route path="/general-construction" element={<GeneralConstructionPage />} />
+        <Route path="/service-areas" element={<ServiceAreas />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/get-quote" element={<GetQuote />} />
 
-        {/* NEW PAGES */}
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<Terms />} />
+        {/* ✅ legal pages */}
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </HashRouter>
   );
