@@ -1,18 +1,18 @@
 import React from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./src/Home";
-import EzEvPage from "./src/EzEvPage";
-import JunkDemoPage from "./src/JunkDemoPage";
-import RoofingPage from "./src/RoofingPage";
-import GeneralConstructionPage from "./src/GeneralConstructionPage";
-import ServiceAreas from "./src/ServiceAreas";
-import About from "./src/About";
-import GetQuote from "./src/GetQuote";
-import StickyCursor from "./src/StickyCursor";
+import Home from "./Home";
+import EzEvPage from "./EzEvPage";
+import JunkDemoPage from "./JunkDemoPage";
+import RoofingPage from "./RoofingPage";
+import GeneralConstructionPage from "./GeneralConstructionPage";
+import ServiceAreas from "./ServiceAreas";
+import About from "./About";
+import GetQuote from "./GetQuote";
+import StickyCursor from "./StickyCursor";
 
-import PrivacyPolicy from "./src/PrivacyPolicy";
-import Terms from "./src/Terms";
+import PrivacyPolicy from "./PrivacyPolicy";
+import Terms from "./Terms";
 
 const App: React.FC = () => {
   return (
