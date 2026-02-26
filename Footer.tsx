@@ -29,9 +29,22 @@ const Footer: React.FC = () => {
           </ul>
         </div>
       </div>
-      <div className="mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-600 uppercase tracking-widest">
-        © {new Date().getFullYear()} Aviel Management Inc. All rights reserved.
-      </div>
+      <div className="mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-600 uppercase tracking-widest space-y-3">
+  
+  <div className="flex justify-center gap-6 text-gray-400 normal-case tracking-normal text-sm">
+    <a href="/privacy-policy" className="hover:text-white transition">
+      Privacy Policy
+    </a>
+    <a href="/terms-of-service" className="hover:text-white transition">
+      Terms of Service
+    </a>
+  </div>
+
+  <div>
+    © {new Date().getFullYear()} Aviel Management Inc. All rights reserved.
+  </div>
+
+</div>
     </footer>
   );
 };
