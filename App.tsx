@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashRouter, Routes, Route } from 'react-router-dom';
+
 import Home from './Home';
 import EzEvPage from './EzEvPage';
 import JunkDemoPage from './JunkDemoPage';
@@ -9,9 +10,11 @@ import ServiceAreas from './ServiceAreas';
 import About from './About';
 import GetQuote from './GetQuote';
 import StickyCursor from './StickyCursor';
-import { PageRoute } from './types';
+
 import PrivacyPolicy from "./PrivacyPolicy";
 import Terms from "./Terms";
+
+import { PageRoute } from './types';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +29,10 @@ const App: React.FC = () => {
         <Route path={PageRoute.SERVICE_AREAS} element={<ServiceAreas />} />
         <Route path={PageRoute.ABOUT} element={<About />} />
         <Route path={PageRoute.GET_QUOTE} element={<GetQuote />} />
+
+        {/* NEW PAGES */}
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-service" element={<Terms />} />
       </Routes>
     </HashRouter>
   );
