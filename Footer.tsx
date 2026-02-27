@@ -1,0 +1,53 @@
+import React from 'react';
+
+const Footer: React.FC = () => {
+  return (
+    <footer className="bg-black text-white py-12 border-t border-white/10">
+      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8">
+        <div className="col-span-2">
+          <h2 className="font-display text-4xl mb-4">AVIEL MANAGEMENT</h2>
+          <p className="text-gray-400 max-w-sm">
+            Building the future, one renovation at a time. From complete structural overhauls to state-of-the-art EV infrastructure.
+          </p>
+        </div>
+        <div>
+          <h3 className="font-bold mb-4 uppercase tracking-widest text-sm text-brand-gold">Services</h3>
+          <ul className="space-y-2 text-gray-400 text-sm">
+            <li>Residential Renovation</li>
+            <li>Commercial Build-outs</li>
+            <li>Structural Engineering</li>
+            <li>EZ EV Installations</li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="font-bold mb-4 uppercase tracking-widest text-sm text-brand-gold">Contact</h3>
+          <ul className="space-y-2 text-gray-400 text-sm">
+            <li>info@avielmanagement.com</li>
+            <li>(917) 275-5796</li>
+            <li>New York City</li>
+            <li>And Nearby</li>
+          </ul>
+        </div>
+      </div>
+      <div className="mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-600 uppercase tracking-widest space-y-3">
+  
+  <div className="flex justify-center gap-6 text-gray-400 normal-case tracking-normal text-sm">
+    {/* HashRouter-safe links */}
+    <a href="#/privacy" className="hover:text-white transition">
+      Privacy Policy
+    </a>
+    <a href="#/terms" className="hover:text-white transition">
+      Terms of Service
+    </a>
+  </div>
+
+  <div>
+    © {new Date().getFullYear()} Aviel Management Inc. All rights reserved.
+  </div>
+
+</div>
+    </footer>
+  );
+};
+
+export default Footer;
