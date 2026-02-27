@@ -1,3 +1,12 @@
+import React from "react";
+import TermsOfService from "./TermsOfService";
+
+const Terms: React.FC = () => {
+  return <TermsOfService />;
+};
+
+export default Terms;
+
 export default function Terms() {
   return (
     <div style={{ padding: "40px", maxWidth: "900px", margin: "auto" }}>
