@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 
 import Home from "./Home";
 import EzEvPage from "./EzEvPage";
@@ -9,16 +9,20 @@ import GeneralConstructionPage from "./GeneralConstructionPage";
 import ServiceAreas from "./ServiceAreas";
 import About from "./About";
 import GetQuote from "./GetQuote";
+
 import StickyCursor from "./StickyCursor";
 
+// Legal pages (must match actual filenames)
 import PrivacyPolicy from "./PrivacyPolicy";
 import Terms from "./Terms";
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <StickyCursor />
+
       <Routes>
+        {/* Main pages */}
         <Route path="/" element={<Home />} />
         <Route path="/ez-ev" element={<EzEvPage />} />
         <Route path="/junk-demo" element={<JunkDemoPage />} />
@@ -28,11 +32,14 @@ const App: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/get-quote" element={<GetQuote />} />
 
-        {/* legal */}
+        {/* Legal pages */}
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Home />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
