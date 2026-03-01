@@ -1,21 +1,17 @@
 import React from "react";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
 
-const TermsOfService: React.FC = () => {
+const PrivacyPolicy: React.FC = () => {
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      <Navbar />
-      <main className="flex-grow max-w-4xl mx-auto px-6 py-20">
-        <h1 className="font-display text-4xl mb-6">Terms of Service</h1>
-        <p className="text-gray-300 leading-relaxed">
-          {/* Paste your terms text here */}
-          These Terms govern your use of our website and services...
+    <div className="min-h-screen bg-black text-white px-6 py-20">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-6">Privacy Policy</h1>
+        <p className="text-gray-400 mb-4">
+          We respect your privacy. Information submitted through this website
+          is used solely for communication and service purposes.
         </p>
-      </main>
-      <Footer />
+      </div>
     </div>
   );
 };
 
-export default TermsOfService;
+export default PrivacyPolicy;
