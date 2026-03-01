@@ -9,11 +9,12 @@ import GeneralConstructionPage from "./GeneralConstructionPage";
 import ServiceAreas from "./ServiceAreas";
 import About from "./About";
 import GetQuote from "./GetQuote";
+import StickyCursor from "./StickyCursor";
 
 import PrivacyPolicy from "./PrivacyPolicy";
 import Terms from "./Terms";
 
-import StickyCursor from "./StickyCursor";
+import { PageRoute } from "./types";
 
 const App: React.FC = () => {
   return (
@@ -21,23 +22,25 @@ const App: React.FC = () => {
       <StickyCursor />
 
       <Routes>
-        {/* main pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/ez-ev" element={<EzEvPage />} />
-        <Route path="/junk-demo" element={<JunkDemoPage />} />
-        <Route path="/roofing" element={<RoofingPage />} />
-        <Route path="/general-construction" element={<GeneralConstructionPage />} />
-        <Route path="/service-areas" element={<ServiceAreas />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/get-quote" element={<GetQuote />} />
+        {/* Main pages (match PageRoute EXACTLY) */}
+        <Route path={PageRoute.HOME} element={<Home />} />
+        <Route path={PageRoute.EZ_EV} element={<EzEvPage />} />
+        <Route path={PageRoute.JUNK_DEMO} element={<JunkDemoPage />} />
+        <Route path={PageRoute.ROOFING} element={<RoofingPage />} />
+        <Route
+          path={PageRoute.GENERAL_CONSTRUCTION}
+          element={<GeneralConstructionPage />}
+        />
+        <Route path={PageRoute.SERVICE_AREAS} element={<ServiceAreas />} />
+        <Route path={PageRoute.ABOUT} element={<About />} />
+        <Route path={PageRoute.GET_QUOTE} element={<GetQuote />} />
 
-        {/* legal pages */}
+        {/* Legal pages */}
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
 
-        {/* fallback */}
-        <Route path="/home" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to={PageRoute.HOME} replace />} />
       </Routes>
     </HashRouter>
   );
