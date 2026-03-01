@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
@@ -9,7 +10,18 @@ const Footer: React.FC = () => {
           <p className="text-gray-400 max-w-sm">
             Building the future, one renovation at a time. From complete structural overhauls to state-of-the-art EV infrastructure.
           </p>
+
+          {/* Legal links */}
+          <div className="mt-4 flex gap-4 text-sm">
+            <Link to="/privacy" className="text-gray-400 hover:text-white underline">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="text-gray-400 hover:text-white underline">
+              Terms of Service
+            </Link>
+          </div>
         </div>
+
         <div>
           <h3 className="font-bold mb-4 uppercase tracking-widest text-sm text-brand-gold">Services</h3>
           <ul className="space-y-2 text-gray-400 text-sm">
@@ -19,6 +31,7 @@ const Footer: React.FC = () => {
             <li>EZ EV Installations</li>
           </ul>
         </div>
+
         <div>
           <h3 className="font-bold mb-4 uppercase tracking-widest text-sm text-brand-gold">Contact</h3>
           <ul className="space-y-2 text-gray-400 text-sm">
@@ -29,23 +42,10 @@ const Footer: React.FC = () => {
           </ul>
         </div>
       </div>
-      <div className="mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-600 uppercase tracking-widest space-y-3">
-  
-  <div className="flex justify-center gap-6 text-gray-400 normal-case tracking-normal text-sm">
-    {/* HashRouter-safe links */}
-    <a href="#/privacy" className="hover:text-white transition">
-      Privacy Policy
-    </a>
-    <a href="#/terms" className="hover:text-white transition">
-      Terms of Service
-    </a>
-  </div>
 
-  <div>
-    © {new Date().getFullYear()} Aviel Management Inc. All rights reserved.
-  </div>
-
-</div>
+      <div className="mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-600 uppercase tracking-widest">
+        © {new Date().getFullYear()} Aviel Management Inc. All rights reserved.
+      </div>
     </footer>
   );
 };
