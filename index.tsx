@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 // App lives at the project root. The previous path had a typo ("scr").
-import App from './src/App';
+import App from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
