@@ -1,8 +1,7 @@
-// src/PrivacyPolicy.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Item: React.FC<{ title: string; children: React.ReactNode }> = ({
+const Section: React.FC<{ title: string; children: React.ReactNode }> = ({
   title,
   children,
 }) => (
@@ -22,18 +21,21 @@ export default function PrivacyPolicy() {
           <div className="text-[11px] uppercase tracking-[0.35em] text-white/50">
             Legal
           </div>
+
           <h1 className="mt-3 font-display text-4xl md:text-5xl">
             Privacy Policy
           </h1>
+
           <p className="mt-3 text-white/70 leading-relaxed">
-            This Privacy Policy explains what we collect, how we use it, and how
-            we protect it when you interact with Aviel Management Inc.
+            This Privacy Policy explains how Aviel Management Inc.
+            collects, uses, and protects your information.
           </p>
 
           <div className="mt-5 flex flex-wrap gap-3">
             <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-white/70">
               Effective: 2026
             </span>
+
             <Link
               to="/terms"
               className="inline-flex items-center rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-xs text-brand-gold hover:bg-brand-gold/15 transition"
@@ -44,62 +46,77 @@ export default function PrivacyPolicy() {
         </header>
 
         <div className="space-y-6">
-          <Item title="1) Information We Collect">
+          <Section title="1) Information We Collect">
             <p>
-              We may collect personal information you provide, such as your name,
-              phone number, email address, project address, and project details
-              when you submit a quote request or contact us.
+              We may collect your name, phone number, email address,
+              and project details when you request a quote or contact us.
             </p>
-          </Item>
+          </Section>
 
-          <Item title="2) How We Use Information">
-            <p>We use your information to:</p>
+          <Section title="2) How We Use Your Information">
             <ul className="list-disc pl-5 space-y-2">
-              <li>Respond to your quote request and questions</li>
-              <li>Schedule appointments and provide service updates</li>
-              <li>Improve our website and customer experience</li>
+              <li>Respond to quote requests</li>
+              <li>Schedule services</li>
+              <li>Send service updates</li>
+              <li>Improve customer experience</li>
             </ul>
-          </Item>
+          </Section>
 
-          <Item title="3) SMS Communications">
+          <Section title="3) SMS Communications">
             <p>
-              If you opt in, we may send text messages about your quote request,
-              scheduling, and service updates.
+              If you opt in, you may receive SMS messages about
+              scheduling and service updates.
             </p>
             <p>
-              Message frequency varies. Msg & data rates may apply. Reply{" "}
-              <strong className="text-white">STOP</strong> to opt out. Reply{" "}
-              <strong className="text-white">HELP</strong> for help.
+              Message frequency varies. Msg & data rates may apply.
+              Reply <strong className="text-white">STOP</strong> to opt out.
+              Reply <strong className="text-white">HELP</strong> for help.
             </p>
-          </Item>
+          </Section>
 
-          <Item title="4) Sharing & Disclosure">
+          <Section title="4) Information Sharing">
             <p>
-              We do not sell or rent your personal information. We may share
-              limited information with service providers who help operate our
-              systems (e.g., messaging, hosting), only as necessary to perform
-              services on our behalf.
+              We do not sell or rent your personal information.
             </p>
-          </Item>
+          </Section>
 
-          <Item title="5) Security">
+          <Section title="5) Security">
             <p>
-              We take reasonable measures to protect your information. However,
-              no system can be guaranteed 100% secure.
+              We use reasonable measures to protect your information.
             </p>
-          </Item>
+          </Section>
 
-          <Item title="6) Contact">
-            <p className="space-y-1">
-              <div className="text-white">Aviel Management Inc.</div>
-              <div>Phone: (917) 275-5796</div>
-              <div>Email: info@avielmanagement.com</div>
-            </p>
-          </Item>
+          <Section title="6) Contact Information">
+            <div className="space-y-2">
+              <div className="text-white font-medium">
+                Aviel Management Inc.
+              </div>
+
+              <div>
+                Phone:{" "}
+                <a
+                  href="tel:9172755796"
+                  className="text-brand-gold hover:underline transition"
+                >
+                  (917) 275-5796
+                </a>
+              </div>
+
+              <div>
+                Email:{" "}
+                <a
+                  href="mailto:info@avielmanagementinc.com"
+                  className="text-brand-gold hover:underline transition"
+                >
+                  info@avielmanagementinc.com
+                </a>
+              </div>
+            </div>
+          </Section>
         </div>
 
         <div className="mt-10 text-xs text-white/40">
-          This template is general website language and not legal advice.
+          This document is general website language and not legal advice.
         </div>
       </div>
     </main>
