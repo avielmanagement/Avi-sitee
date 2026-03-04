@@ -1,283 +1,378 @@
-import React, { useState } from 'react';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import { Send, Phone, User, Mail, FileText, Zap, DollarSign, ShieldCheck, PhoneCall } from 'lucide-react';
+import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+import { PageRoute } from "./types";
 
-const COMPANY_PHONE_DISPLAY = '(917) 275-5796';
-const COMPANY_PHONE_TEL = '+19172755796';
+const EMAIL = "info@avielmanagementinc.com";
+const PHONE_DISPLAY = "(917) 275-5796";
+const PHONE_TEL = "+19172755796";
+
+// OPTIONAL: set this in Vercel -> Settings -> Environment Variables
+// Key: VITE_GHL_WEBHOOK_URL
+const GHL_WEBHOOK = import.meta.env.VITE_GHL_WEBHOOK_URL as string | undefined;
+
+type Status = "idle" | "sending" | "success" | "error";
 
 const GetQuote: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    description: '',
-  });
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [projectType, setProjectType] = useState("");
+  const [budget, setBudget] = useState("");
+  const [timeline, setTimeline] = useState("");
+  const [details, setDetails] = useState("");
+  const [consent, setConsent] = useState(false);
 
-  // SMS consent (A2P / carrier compliance). If you plan to text leads, keep this.
-  const [smsConsent, setSmsConsent] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
 
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const projectOptions = useMemo(
+    () => [
+      { value: "", label: "Select…" },
+      { value: "General Construction", label: "General Construction" },
+      { value: "Roofing", label: "Roofing" },
+      { value: "Junk / Demo", label: "Junk Removal / Demo" },
+      { value: "EZ EV Installation", label: "EZ EV Installation" },
+      { value: "Other", label: "Other" },
+    ],
+    []
+  );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const budgetOptions = useMemo(
+    () => [
+      { value: "", label: "Select…" },
+      { value: "$1k–$5k", label: "$1k – $5k" },
+      { value: "$5k–$15k", label: "$5k – $15k" },
+      { value: "$15k–$50k", label: "$15k – $50k" },
+      { value: "$50k+", label: "$50k+" },
+    ],
+    []
+  );
+
+  const timelineOptions = useMemo(
+    () => [
+      { value: "", label: "Select…" },
+      { value: "ASAP", label: "ASAP" },
+      { value: "1–2 weeks", label: "1–2 weeks" },
+      { value: "2–4 weeks", label: "2–4 weeks" },
+      { value: "1–3 months", label: "1–3 months" },
+      { value: "Flexible", label: "Flexible" },
+    ],
+    []
+  );
+
+  const canSubmit =
+    fullName.trim() &&
+    phone.trim() &&
+    email.trim() &&
+    projectType.trim() &&
+    budget.trim() &&
+    timeline.trim() &&
+    details.trim() &&
+    consent;
+
+  const reset = () => {
+    setFullName("");
+    setPhone("");
+    setEmail("");
+    setProjectType("");
+    setBudget("");
+    setTimeline("");
+    setDetails("");
+    setConsent(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSubmit) return;
 
-    // If you're going to text/call the lead, get explicit consent when a phone number is provided.
-    if (formData.phone.trim() && !smsConsent) {
-      alert('Please check the SMS consent box so we can text you updates about your request.');
-      return;
-    }
-
-    setLoading(true);
+    setStatus("sending");
 
     try {
-      const res = await fetch('/api/quote', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          description: formData.description,
-          source: 'Website Quote Form',
-          page: 'GetQuote',
-        }),
-      });
+      const payload = {
+        fullName,
+        phone,
+        email,
+        projectType,
+        budget,
+        timeline,
+        details,
+        consent: true,
+        source: "Website - Get Quote Page",
+        page: "get-quote",
+      };
 
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        console.error('API Error:', res.status, text);
-        alert('Failed to send quote. Please try again.');
-        return;
+      if (GHL_WEBHOOK) {
+        const res = await fetch(GHL_WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Webhook failed");
+      } else {
+        // If webhook isn't set, we still let you test UX.
+        console.warn("No VITE_GHL_WEBHOOK_URL set. Form is not sending anywhere yet.");
       }
 
-      setSubmitted(true);
+      setStatus("success");
+      reset();
     } catch (err) {
-      console.error('Submit error:', err);
-      alert('Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error(err);
+      setStatus("error");
     }
   };
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-brand-dark flex flex-col selection:bg-brand-gold selection:text-black">
-        <Navbar />
-        <div className="flex-grow flex items-center justify-center px-4">
-          <div className="text-center max-w-2xl animate-fade-in-up border border-white/10 p-12 bg-zinc-900/50 backdrop-blur-sm">
-            <h1 className="font-display text-5xl md:text-6xl text-brand-gold mb-6 uppercase">
-              Request Received
-            </h1>
-
-            <p className="text-white text-xl mb-8 font-light">
-              Thank you, <span className="font-bold">{formData.name}</span>. We received your details.
-              We’ll call you at <span className="text-brand-gold">{formData.phone}</span> shortly.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-              <a
-                href={`tel:${COMPANY_PHONE_TEL}`}
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand-gold text-black font-bold uppercase tracking-widest hover:bg-white transition-colors"
-              >
-                <PhoneCall className="w-5 h-5" />
-                Call Now: {COMPANY_PHONE_DISPLAY}
-              </a>
-            </div>
-
-            <button
-              onClick={() => {
-                setSubmitted(false);
-                setFormData({ name: '', phone: '', email: '', description: '' });
-              }}
-              className="text-gray-400 hover:text-white underline uppercase tracking-widest text-sm"
-            >
-              Submit another request
-            </button>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-brand-dark overflow-hidden flex flex-col selection:bg-brand-gold selection:text-black">
+    <div className="min-h-screen bg-black text-white">
       <Navbar />
 
-      <div className="flex-grow flex flex-col lg:flex-row relative">
-        {/* Left Side */}
-        <div className="lg:w-1/2 relative min-h-[40vh] lg:min-h-screen">
-          <img
-            src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop"
-            alt="Architecture"
-            className="absolute inset-0 w-full h-full object-cover opacity-50 grayscale"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/95 via-brand-dark/80 to-brand-dark" />
+      {/* HERO */}
+      <section className="relative overflow-hidden">
+        {/* Background layers */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-black/70 to-black" />
+        <div className="absolute inset-0 opacity-40">
+          <div className="h-full w-full bg-[radial-gradient(circle_at_20%_20%,rgba(212,175,55,0.20),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(16,185,129,0.12),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(255,255,255,0.06),transparent_45%)]" />
+        </div>
 
-          <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16 pt-20">
-            <div className="animate-fade-in-up">
-              <div className="bg-brand-gold inline-block px-4 py-1 mb-4">
-                <span className="text-black font-bold uppercase tracking-widest text-sm">No Obligation</span>
+        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20">
+          <div className="grid lg:grid-cols-2 gap-10 items-start">
+            {/* LEFT */}
+            <div className="pt-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                We respond fast — usually within a few hours
               </div>
 
-              <h2 className="font-display text-6xl md:text-8xl text-white uppercase mb-4 drop-shadow-xl leading-[0.9]">
-                Free<br /><span className="text-brand-gold">Estimates</span>
-              </h2>
+              <h1 className="mt-5 font-display text-5xl md:text-6xl leading-tight">
+                Get a <span className="text-brand-gold">Fast</span> Quote
+              </h1>
 
-              <div className="w-24 h-1 bg-white mb-8" />
-
-              <p className="text-gray-200 text-lg md:text-xl max-w-md font-light leading-relaxed mb-12">
-                Ready to bring your vision into reality? Tell us about your project. Transparent, up-front pricing.
+              <p className="mt-5 text-white/70 max-w-xl">
+                Share what you need and we’ll send a clear estimate and next steps. Transparent pricing,
+                clean execution, and quick scheduling.
               </p>
 
-              <div className="grid grid-cols-1 gap-6 max-w-md">
-                <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-full bg-brand-green/10 flex-shrink-0 flex items-center justify-center border border-brand-green/30 group-hover:bg-brand-green transition-colors duration-300">
-                    <Zap className="text-brand-green w-6 h-6 group-hover:text-black transition-colors" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">Same Day EV Installations</h4>
-                    <p className="text-gray-400 text-xs">Available for standard setups.</p>
-                  </div>
+              {/* Trust bullets */}
+              <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-xl">
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm font-semibold">Licensed & Insured</p>
+                  <p className="text-xs text-white/60 mt-1">
+                    Professional crews and clean job sites.
+                  </p>
                 </div>
-
-                <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-full bg-brand-gold/10 flex-shrink-0 flex items-center justify-center border border-brand-gold/30 group-hover:bg-brand-gold transition-colors duration-300">
-                    <DollarSign className="text-brand-gold w-6 h-6 group-hover:text-black transition-colors" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">Best Price Guaranteed</h4>
-                    <p className="text-gray-400 text-xs">We beat competitor quotes.</p>
-                  </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm font-semibold">NYC + Nearby</p>
+                  <p className="text-xs text-white/60 mt-1">
+                    Brooklyn, Queens, Manhattan, Bronx, Staten Island & more.
+                  </p>
                 </div>
-
-                <div className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 rounded-full bg-blue-500/10 flex-shrink-0 flex items-center justify-center border border-blue-500/30 group-hover:bg-blue-500 transition-colors duration-300">
-                    <ShieldCheck className="text-blue-400 w-6 h-6 group-hover:text-black transition-colors" />
-                  </div>
-                  <div>
-                    <h4 className="text-white font-bold uppercase tracking-wider text-sm">Licensed & Insured</h4>
-                    <p className="text-gray-400 text-xs">Certified professionals.</p>
-                  </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm font-semibold">Up-front Pricing</p>
+                  <p className="text-xs text-white/60 mt-1">
+                    Clear scope, clear timeline, no confusion.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-sm font-semibold">Quality Craftsmanship</p>
+                  <p className="text-xs text-white/60 mt-1">
+                    Built to last — not built to rush.
+                  </p>
                 </div>
               </div>
 
+              {/* Contact strip */}
+              <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5 max-w-xl">
+                <p className="text-xs uppercase tracking-widest text-white/60">Contact</p>
+                <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+                  <a
+                    className="text-sm text-brand-gold hover:opacity-80"
+                    href={`tel:${PHONE_TEL}`}
+                  >
+                    {PHONE_DISPLAY}
+                  </a>
+                  <a
+                    className="text-sm text-brand-gold hover:opacity-80"
+                    href={`mailto:${EMAIL}`}
+                  >
+                    {EMAIL}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT FORM CARD */}
+            <div className="rounded-3xl border border-white/10 bg-white/5 shadow-2xl overflow-hidden">
+              <div className="p-6 md:p-8 border-b border-white/10">
+                <h2 className="text-2xl font-semibold">Request a Quote</h2>
+                <p className="text-sm text-white/60 mt-1">
+                  Fill this out and we’ll text/call you ASAP.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-white/70">Full Name *</label>
+                    <input
+                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      placeholder="John Smith"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-white/70">Phone *</label>
+                    <input
+                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      placeholder={PHONE_DISPLAY}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                    />
+                    <p className="text-[11px] text-white/50 mt-1">
+                      We’ll contact you about your request.
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs text-white/70">Email *</label>
+                  <input
+                    type="email"
+                    className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                    placeholder="you@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-white/70">Project Type *</label>
+                  <select
+                    className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                    value={projectType}
+                    onChange={(e) => setProjectType(e.target.value)}
+                    required
+                  >
+                    {projectOptions.map((o) => (
+                      <option key={o.value || "empty"} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs text-white/70">Budget *</label>
+                    <select
+                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                      required
+                    >
+                      {budgetOptions.map((o) => (
+                        <option key={o.value || "empty"} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-white/70">Timeline *</label>
+                    <select
+                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      value={timeline}
+                      onChange={(e) => setTimeline(e.target.value)}
+                      required
+                    >
+                      {timelineOptions.map((o) => (
+                        <option key={o.value || "empty"} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs text-white/70">Project Details *</label>
+                  <textarea
+                    className="mt-2 w-full min-h-[120px] rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                    placeholder="What do you need done? Include borough/address (optional) and any details…"
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* Consent */}
+                <label className="flex items-start gap-3 text-xs text-white/70">
+                  <input
+                    type="checkbox"
+                    className="mt-1"
+                    checked={consent}
+                    onChange={(e) => setConsent(e.target.checked)}
+                    required
+                  />
+                  <span>
+                    I agree to receive text messages from Aviel Management Inc. about my request.
+                    Message & data rates may apply. Reply STOP to opt out. Reply HELP for help. See{" "}
+                    <Link className="text-brand-gold hover:opacity-80" to={PageRoute.PRIVACY}>
+                      Privacy Policy
+                    </Link>{" "}
+                    and{" "}
+                    <Link className="text-brand-gold hover:opacity-80" to={PageRoute.TERMS}>
+                      Terms of Service
+                    </Link>
+                    .
+                  </span>
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={status === "sending" || !canSubmit}
+                  className="w-full rounded-xl bg-brand-gold text-black font-semibold py-3 hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {status === "sending" ? "Submitting..." : "Submit Quote Request"}
+                </button>
+
+                {status === "success" && (
+                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3">
+                    <p className="text-sm text-emerald-300">
+                      Submitted! We’ll contact you shortly.
+                    </p>
+                  </div>
+                )}
+
+                {status === "error" && (
+                  <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3">
+                    <p className="text-sm text-red-200">
+                      Something went wrong. Please call{" "}
+                      <a className="underline" href={`tel:${PHONE_TEL}`}>
+                        {PHONE_DISPLAY}
+                      </a>{" "}
+                      or email{" "}
+                      <a className="underline" href={`mailto:${EMAIL}`}>
+                        {EMAIL}
+                      </a>
+                      .
+                    </p>
+                  </div>
+                )}
+
+                <p className="text-[11px] text-white/50 text-center">
+                  By submitting, you agree to be contacted about your request.
+                </p>
+              </form>
             </div>
           </div>
         </div>
-
-        {/* Right Side - Form */}
-        <div className="lg:w-1/2 px-6 py-12 md:p-24 flex flex-col justify-center bg-brand-dark relative z-10 pt-24 lg:pt-24">
-          <div className="max-w-lg mx-auto w-full">
-            <h1 className="font-display text-4xl md:text-5xl text-white uppercase mb-2">Start the Conversation</h1>
-            <p className="text-gray-400 mb-6 text-lg">We respond within a few hours.</p>
-
-            <a
-              href={`tel:${COMPANY_PHONE_TEL}`}
-              className="inline-flex items-center gap-2 mb-10 text-brand-gold font-bold uppercase tracking-widest text-sm hover:text-white transition-colors"
-            >
-              <PhoneCall className="w-4 h-4" />
-              Call {COMPANY_PHONE_DISPLAY}
-            </a>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">Full Name</label>
-                  <div className="relative group">
-                    <User className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full bg-zinc-900 border border-white/10 p-4 pl-12 text-white focus:border-brand-gold focus:bg-zinc-800 focus:outline-none transition-all placeholder:text-gray-600"
-                      placeholder="Your Name"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">Phone Number</label>
-                  <div className="relative group">
-                    <Phone className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full bg-zinc-900 border border-white/10 p-4 pl-12 text-white focus:border-brand-gold focus:bg-zinc-800 focus:outline-none transition-all placeholder:text-gray-600"
-                      placeholder="(917) 275-5796"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-gray-500 ml-1 font-bold">Email (Optional)</label>
-                <div className="relative group">
-                  <Mail className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full bg-zinc-900 border border-white/10 p-4 pl-12 text-white focus:border-brand-gold focus:bg-zinc-800 focus:outline-none transition-all placeholder:text-gray-600"
-                    placeholder="email@address.com"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-widest text-brand-gold ml-1 font-bold">What needs to be done?</label>
-                <div className="relative group">
-                  <FileText className="absolute left-4 top-4 text-gray-500 w-5 h-5 group-focus-within:text-white transition-colors" />
-                  <textarea
-                    name="description"
-                    required
-                    value={formData.description}
-                    onChange={handleChange}
-                    className="w-full bg-zinc-900 border border-white/10 p-4 pl-12 text-white focus:border-brand-gold focus:bg-zinc-800 focus:outline-none transition-all placeholder:text-gray-600 min-h-[160px]"
-                    placeholder="Describe your project needs..."
-                  />
-                </div>
-              </div>
-
-              {/* SMS Consent (required when phone is provided) */}
-              <label className="flex items-start gap-3 text-sm text-gray-300 mt-2">
-                <input
-                  type="checkbox"
-                  checked={smsConsent}
-                  onChange={(e) => setSmsConsent(e.target.checked)}
-                  className="mt-1 h-4 w-4 accent-brand-gold"
-                />
-                <span>
-                  I agree to receive text messages from Aviel Management Inc. about my request. Message & data rates may apply.
-                  Reply STOP to unsubscribe. Reply HELP for help. See our{' '}
-                  <a href="#/privacy" className="underline hover:text-white">Privacy Policy</a> and{' '}
-                  <a href="#/terms" className="underline hover:text-white">Terms of Service</a>.
-                </span>
-              </label>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-brand-gold text-black font-bold uppercase tracking-widest py-5 hover:bg-white hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-3 mt-6 shadow-lg shadow-brand-gold/20 disabled:opacity-60 disabled:hover:scale-100"
-              >
-                {loading ? 'Sending...' : <>Request Callback <Send className="w-5 h-5" /></>}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      </section>
 
       <Footer />
     </div>
