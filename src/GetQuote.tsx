@@ -1,5 +1,14 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  ShieldCheck,
+  BadgeCheck,
+  Clock3,
+  MapPin,
+  PhoneCall,
+  Mail,
+  ArrowUpRight,
+} from "lucide-react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { PageRoute } from "./types";
@@ -8,9 +17,13 @@ const EMAIL = "info@avielmanagementinc.com";
 const PHONE_DISPLAY = "(917) 275-5796";
 const PHONE_TEL = "+19172755796";
 
-// OPTIONAL: set this in Vercel -> Settings -> Environment Variables
+// OPTIONAL: Vercel -> Settings -> Environment Variables
 // Key: VITE_GHL_WEBHOOK_URL
 const GHL_WEBHOOK = import.meta.env.VITE_GHL_WEBHOOK_URL as string | undefined;
+
+// Optional: if you want a real background image, paste its URL here
+// (or keep empty to use the premium gradient background)
+const HERO_BG_IMAGE_URL = "";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -110,8 +123,8 @@ const GetQuote: React.FC = () => {
         });
         if (!res.ok) throw new Error("Webhook failed");
       } else {
-        // If webhook isn't set, we still let you test UX.
-        console.warn("No VITE_GHL_WEBHOOK_URL set. Form is not sending anywhere yet.");
+        // still allow UI testing
+        console.warn("No VITE_GHL_WEBHOOK_URL set. Form isn't sending anywhere yet.");
       }
 
       setStatus("success");
@@ -126,249 +139,347 @@ const GetQuote: React.FC = () => {
     <div className="min-h-screen bg-black text-white">
       <Navbar />
 
-      {/* HERO */}
+      {/* HERO SECTION */}
       <section className="relative overflow-hidden">
-        {/* Background layers */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-black/70 to-black" />
-        <div className="absolute inset-0 opacity-40">
-          <div className="h-full w-full bg-[radial-gradient(circle_at_20%_20%,rgba(212,175,55,0.20),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(16,185,129,0.12),transparent_40%),radial-gradient(circle_at_50%_90%,rgba(255,255,255,0.06),transparent_45%)]" />
+        {/* Background */}
+        <div className="absolute inset-0">
+          {/* Optional image */}
+          {HERO_BG_IMAGE_URL ? (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${HERO_BG_IMAGE_URL})` }}
+            />
+          ) : null}
+
+          {/* Premium gradient + vignettes */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/70 to-black" />
+          <div className="absolute inset-0 opacity-50">
+            <div className="h-full w-full bg-[radial-gradient(circle_at_15%_25%,rgba(212,175,55,0.22),transparent_45%),radial-gradient(circle_at_85%_30%,rgba(34,197,94,0.14),transparent_45%),radial-gradient(circle_at_60%_85%,rgba(255,255,255,0.06),transparent_50%)]" />
+          </div>
+
+          {/* Subtle “grid” texture */}
+          <div className="absolute inset-0 opacity-[0.10]">
+            <div className="h-full w-full bg-[linear-gradient(to_right,rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.12)_1px,transparent_1px)] bg-[size:60px_60px]" />
+          </div>
+
+          {/* Dark vignette edges */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20">
           <div className="grid lg:grid-cols-2 gap-10 items-start">
-            {/* LEFT */}
-            <div className="pt-2">
+            {/* LEFT HERO */}
+            <div className="pt-1">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
                 <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                We respond fast — usually within a few hours
+                No obligation • Fast response
               </div>
 
-              <h1 className="mt-5 font-display text-5xl md:text-6xl leading-tight">
-                Get a <span className="text-brand-gold">Fast</span> Quote
-              </h1>
+              <div className="mt-6">
+                <div className="text-[12px] tracking-[0.35em] text-white/60 uppercase">
+                  Aviel Management Inc.
+                </div>
 
-              <p className="mt-5 text-white/70 max-w-xl">
-                Share what you need and we’ll send a clear estimate and next steps. Transparent pricing,
-                clean execution, and quick scheduling.
-              </p>
+                <h1 className="mt-3 font-display leading-[0.95]">
+                  <span className="block text-6xl md:text-7xl font-extrabold">
+                    FREE
+                  </span>
+                  <span className="block text-6xl md:text-7xl font-extrabold text-brand-gold">
+                    ESTIMATES
+                  </span>
+                </h1>
 
-              {/* Trust bullets */}
-              <div className="mt-8 grid sm:grid-cols-2 gap-4 max-w-xl">
+                <p className="mt-5 text-white/70 max-w-xl">
+                  Ready to build? Tell us what you need and we’ll give you a clear estimate,
+                  timeline, and next steps — fast, transparent, and professional.
+                </p>
+              </div>
+
+              {/* Trust row */}
+              <div className="mt-7 flex flex-wrap gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">
+                  <Clock3 className="h-4 w-4 text-emerald-400" />
+                  Same-day replies
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">
+                  <ShieldCheck className="h-4 w-4 text-brand-gold" />
+                  Licensed & insured
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">
+                  <BadgeCheck className="h-4 w-4 text-white/80" />
+                  Quality craftsmanship
+                </span>
+              </div>
+
+              {/* Feature list */}
+              <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-xl">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-sm font-semibold">Licensed & Insured</p>
-                  <p className="text-xs text-white/60 mt-1">
-                    Professional crews and clean job sites.
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-xl border border-white/10 bg-black/40 p-2">
+                      <MapPin className="h-5 w-5 text-brand-gold" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">NYC + Nearby</p>
+                      <p className="text-xs text-white/60 mt-1">
+                        Brooklyn • Queens • Manhattan • Bronx • Staten Island
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-sm font-semibold">NYC + Nearby</p>
-                  <p className="text-xs text-white/60 mt-1">
-                    Brooklyn, Queens, Manhattan, Bronx, Staten Island & more.
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-xl border border-white/10 bg-black/40 p-2">
+                      <Clock3 className="h-5 w-5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Quick Scheduling</p>
+                      <p className="text-xs text-white/60 mt-1">
+                        Tell us your timeline — we’ll work around it.
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-sm font-semibold">Up-front Pricing</p>
-                  <p className="text-xs text-white/60 mt-1">
-                    Clear scope, clear timeline, no confusion.
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-xl border border-white/10 bg-black/40 p-2">
+                      <ShieldCheck className="h-5 w-5 text-brand-gold" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Up-front Pricing</p>
+                      <p className="text-xs text-white/60 mt-1">
+                        Clear scope, clear estimate, no confusion.
+                      </p>
+                    </div>
+                  </div>
                 </div>
+
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-sm font-semibold">Quality Craftsmanship</p>
-                  <p className="text-xs text-white/60 mt-1">
-                    Built to last — not built to rush.
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-xl border border-white/10 bg-black/40 p-2">
+                      <BadgeCheck className="h-5 w-5 text-white/80" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Built to Last</p>
+                      <p className="text-xs text-white/60 mt-1">
+                        Clean finish, solid workmanship, professional crews.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* Contact strip */}
-              <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5 max-w-xl">
-                <p className="text-xs uppercase tracking-widest text-white/60">Contact</p>
+              {/* Contact block */}
+              <div className="mt-10 rounded-3xl border border-white/10 bg-white/5 p-5 max-w-xl">
+                <p className="text-xs uppercase tracking-widest text-white/60">
+                  Start the conversation
+                </p>
+
                 <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
                   <a
-                    className="text-sm text-brand-gold hover:opacity-80"
+                    className="inline-flex items-center gap-2 text-sm text-brand-gold hover:opacity-80"
                     href={`tel:${PHONE_TEL}`}
                   >
+                    <PhoneCall className="h-4 w-4" />
                     {PHONE_DISPLAY}
+                    <ArrowUpRight className="h-4 w-4 opacity-70" />
                   </a>
+
                   <a
-                    className="text-sm text-brand-gold hover:opacity-80"
+                    className="inline-flex items-center gap-2 text-sm text-brand-gold hover:opacity-80"
                     href={`mailto:${EMAIL}`}
                   >
+                    <Mail className="h-4 w-4" />
                     {EMAIL}
+                    <ArrowUpRight className="h-4 w-4 opacity-70" />
                   </a>
                 </div>
               </div>
             </div>
 
             {/* RIGHT FORM CARD */}
-            <div className="rounded-3xl border border-white/10 bg-white/5 shadow-2xl overflow-hidden">
-              <div className="p-6 md:p-8 border-b border-white/10">
-                <h2 className="text-2xl font-semibold">Request a Quote</h2>
-                <p className="text-sm text-white/60 mt-1">
-                  Fill this out and we’ll text/call you ASAP.
-                </p>
+            <div className="relative">
+              {/* glow */}
+              <div className="absolute -inset-4 rounded-[2.5rem] bg-[radial-gradient(circle_at_30%_20%,rgba(212,175,55,0.22),transparent_55%),radial-gradient(circle_at_70%_30%,rgba(34,197,94,0.12),transparent_55%)] blur-2xl opacity-80" />
+
+              <div className="relative rounded-3xl border border-white/12 bg-black/55 backdrop-blur-xl shadow-2xl overflow-hidden">
+                <div className="p-6 md:p-8 border-b border-white/10">
+                  <h2 className="text-2xl font-semibold">Request Callback</h2>
+                  <p className="text-sm text-white/60 mt-1">
+                    Fill this out — we’ll text/call you about your quote.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs text-white/70">Full Name *</label>
+                      <input
+                        className="mt-2 w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                        placeholder="Your Name"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-white/70">Phone *</label>
+                      <input
+                        className="mt-2 w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                        placeholder={PHONE_DISPLAY}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        required
+                      />
+                      <p className="text-[11px] text-white/50 mt-1">
+                        We’ll contact you about your request.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-white/70">Email *</label>
+                    <input
+                      type="email"
+                      className="mt-2 w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      placeholder="you@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-white/70">Project Type *</label>
+                    <select
+                      className="mt-2 w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      value={projectType}
+                      onChange={(e) => setProjectType(e.target.value)}
+                      required
+                    >
+                      {projectOptions.map((o) => (
+                        <option key={o.value || "empty"} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs text-white/70">Budget *</label>
+                      <select
+                        className="mt-2 w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                        value={budget}
+                        onChange={(e) => setBudget(e.target.value)}
+                        required
+                      >
+                        {budgetOptions.map((o) => (
+                          <option key={o.value || "empty"} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-white/70">Timeline *</label>
+                      <select
+                        className="mt-2 w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                        value={timeline}
+                        onChange={(e) => setTimeline(e.target.value)}
+                        required
+                      >
+                        {timelineOptions.map((o) => (
+                          <option key={o.value || "empty"} value={o.value}>
+                            {o.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-white/70">Project Details *</label>
+                    <textarea
+                      className="mt-2 w-full min-h-[130px] rounded-xl bg-black/45 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
+                      placeholder="Describe what you need done, borough/address (optional), and any key details…"
+                      value={details}
+                      onChange={(e) => setDetails(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  {/* Consent */}
+                  <label className="flex items-start gap-3 text-xs text-white/70">
+                    <input
+                      type="checkbox"
+                      className="mt-1"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      required
+                    />
+                    <span>
+                      I agree to receive text messages from Aviel Management Inc. about my request.
+                      Message & data rates may apply. Reply STOP to opt out. Reply HELP for help. See{" "}
+                      <Link className="text-brand-gold hover:opacity-80" to={PageRoute.PRIVACY}>
+                        Privacy Policy
+                      </Link>{" "}
+                      and{" "}
+                      <Link className="text-brand-gold hover:opacity-80" to={PageRoute.TERMS}>
+                        Terms of Service
+                      </Link>
+                      .
+                    </span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={status === "sending" || !canSubmit}
+                    className="w-full rounded-xl bg-brand-gold text-black font-semibold py-3 hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {status === "sending" ? "Submitting..." : "Request Callback"}
+                  </button>
+
+                  {status === "success" && (
+                    <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3">
+                      <p className="text-sm text-emerald-300">
+                        Submitted! We’ll contact you shortly.
+                      </p>
+                    </div>
+                  )}
+
+                  {status === "error" && (
+                    <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3">
+                      <p className="text-sm text-red-200">
+                        Something went wrong. Please call{" "}
+                        <a className="underline" href={`tel:${PHONE_TEL}`}>
+                          {PHONE_DISPLAY}
+                        </a>{" "}
+                        or email{" "}
+                        <a className="underline" href={`mailto:${EMAIL}`}>
+                          {EMAIL}
+                        </a>
+                        .
+                      </p>
+                    </div>
+                  )}
+
+                  <p className="text-[11px] text-white/50 text-center">
+                    By submitting, you agree to be contacted about your request.
+                  </p>
+                </form>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-white/70">Full Name *</label>
-                    <input
-                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                      placeholder="John Smith"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-white/70">Phone *</label>
-                    <input
-                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                      placeholder={PHONE_DISPLAY}
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      required
-                    />
-                    <p className="text-[11px] text-white/50 mt-1">
-                      We’ll contact you about your request.
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs text-white/70">Email *</label>
-                  <input
-                    type="email"
-                    className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                    placeholder="you@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-white/70">Project Type *</label>
-                  <select
-                    className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                    value={projectType}
-                    onChange={(e) => setProjectType(e.target.value)}
-                    required
-                  >
-                    {projectOptions.map((o) => (
-                      <option key={o.value || "empty"} value={o.value}>
-                        {o.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-white/70">Budget *</label>
-                    <select
-                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                      value={budget}
-                      onChange={(e) => setBudget(e.target.value)}
-                      required
-                    >
-                      {budgetOptions.map((o) => (
-                        <option key={o.value || "empty"} value={o.value}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-xs text-white/70">Timeline *</label>
-                    <select
-                      className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                      value={timeline}
-                      onChange={(e) => setTimeline(e.target.value)}
-                      required
-                    >
-                      {timelineOptions.map((o) => (
-                        <option key={o.value || "empty"} value={o.value}>
-                          {o.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-xs text-white/70">Project Details *</label>
-                  <textarea
-                    className="mt-2 w-full min-h-[120px] rounded-xl bg-black/40 border border-white/10 px-3 py-2 text-sm outline-none focus:border-brand-gold"
-                    placeholder="What do you need done? Include borough/address (optional) and any details…"
-                    value={details}
-                    onChange={(e) => setDetails(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* Consent */}
-                <label className="flex items-start gap-3 text-xs text-white/70">
-                  <input
-                    type="checkbox"
-                    className="mt-1"
-                    checked={consent}
-                    onChange={(e) => setConsent(e.target.checked)}
-                    required
-                  />
-                  <span>
-                    I agree to receive text messages from Aviel Management Inc. about my request.
-                    Message & data rates may apply. Reply STOP to opt out. Reply HELP for help. See{" "}
-                    <Link className="text-brand-gold hover:opacity-80" to={PageRoute.PRIVACY}>
-                      Privacy Policy
-                    </Link>{" "}
-                    and{" "}
-                    <Link className="text-brand-gold hover:opacity-80" to={PageRoute.TERMS}>
-                      Terms of Service
-                    </Link>
-                    .
-                  </span>
-                </label>
-
-                <button
-                  type="submit"
-                  disabled={status === "sending" || !canSubmit}
-                  className="w-full rounded-xl bg-brand-gold text-black font-semibold py-3 hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {status === "sending" ? "Submitting..." : "Submit Quote Request"}
-                </button>
-
-                {status === "success" && (
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3">
-                    <p className="text-sm text-emerald-300">
-                      Submitted! We’ll contact you shortly.
-                    </p>
-                  </div>
-                )}
-
-                {status === "error" && (
-                  <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-3">
-                    <p className="text-sm text-red-200">
-                      Something went wrong. Please call{" "}
-                      <a className="underline" href={`tel:${PHONE_TEL}`}>
-                        {PHONE_DISPLAY}
-                      </a>{" "}
-                      or email{" "}
-                      <a className="underline" href={`mailto:${EMAIL}`}>
-                        {EMAIL}
-                      </a>
-                      .
-                    </p>
-                  </div>
-                )}
-
-                <p className="text-[11px] text-white/50 text-center">
-                  By submitting, you agree to be contacted about your request.
-                </p>
-              </form>
+              {/* small note */}
+              <div className="mt-4 text-center text-xs text-white/45">
+                Prefer email? Send details to{" "}
+                <a className="text-brand-gold hover:opacity-80" href={`mailto:${EMAIL}`}>
+                  {EMAIL}
+                </a>
+              </div>
             </div>
           </div>
         </div>
