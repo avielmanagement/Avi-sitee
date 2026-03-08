@@ -50,21 +50,28 @@ const [consent,setConsent] = useState(false);
 
 const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
 
-const canSubmit =
-name &&
-email &&
-validPhone &&
-service &&
-budget &&
-timeline &&
-details &&
-consent;
+const missingRequired =
+!name ||
+!email ||
+!validPhone ||
+!address ||
+!zip ||
+!service ||
+!budget ||
+!timeline ||
+!property ||
+!details ||
+!heard ||
+!consent;
 
 const handleSubmit = async (e:React.FormEvent)=>{
 
 e.preventDefault();
 
-if(!canSubmit) return;
+if(missingRequired){
+setStatus("error");
+return;
+}
 
 setStatus("sending");
 
@@ -113,9 +120,9 @@ return(
 
 <div className="min-h-screen bg-black text-white relative overflow-hidden">
 
-{/* glow background */}
+{/* animated glow */}
 
-<div className="absolute w-[600px] h-[600px] bg-yellow-500/20 blur-[160px] rounded-full -left-40 top-20"/>
+<div className="absolute w-[700px] h-[700px] bg-yellow-500/20 blur-[180px] rounded-full -left-60 top-10 animate-pulse"/>
 
 <Navbar/>
 
@@ -123,12 +130,12 @@ return(
 
 <div className="grid lg:grid-cols-2 gap-16 items-start">
 
-{/* LEFT SIDE */}
+{/* LEFT */}
 
 <div>
 
 <div className="text-xs tracking-[0.4em] text-white/50 uppercase">
-AVIEL MANAGEMENT INC.
+AVIEL MANAGEMENT INC
 </div>
 
 <h1 className="mt-4 font-extrabold leading-[0.95]">
@@ -172,19 +179,19 @@ timeline and next steps from experienced NYC contractors.
 
 <div className="grid grid-cols-2 gap-4 mt-10">
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
 <Hammer size={18}/> General Construction
 </div>
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
 <Zap size={18}/> EV Charger Install
 </div>
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
 <Trash2 size={18}/> Junk Removal
 </div>
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
 <Shield size={18}/> Roofing
 </div>
 
@@ -194,7 +201,7 @@ timeline and next steps from experienced NYC contractors.
 
 {/* FORM */}
 
-<div className="border border-white/10 rounded-3xl bg-black/60 backdrop-blur-xl p-8">
+<div className="border border-white/10 rounded-3xl bg-black/60 backdrop-blur-xl p-8 shadow-xl">
 
 <h2 className="text-2xl font-semibold">
 Request Callback
@@ -250,13 +257,11 @@ value={service}
 onChange={(e)=>setService(e.target.value)}
 className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 >
-
 <option value="">Service Requested</option>
 <option>General Construction</option>
 <option>Roofing</option>
 <option>Junk Removal</option>
 <option>EV Charger Installation</option>
-
 </select>
 
 <div className="grid grid-cols-2 gap-3">
@@ -266,13 +271,11 @@ value={budget}
 onChange={(e)=>setBudget(e.target.value)}
 className="bg-black border border-white/10 rounded-lg px-3 py-2"
 >
-
 <option value="">Estimated Budget</option>
 <option>$1k-$5k</option>
 <option>$5k-$15k</option>
 <option>$15k-$50k</option>
 <option>$50k+</option>
-
 </select>
 
 <select
@@ -280,13 +283,11 @@ value={timeline}
 onChange={(e)=>setTimeline(e.target.value)}
 className="bg-black border border-white/10 rounded-lg px-3 py-2"
 >
-
 <option value="">Project Timeline</option>
 <option>ASAP</option>
 <option>1-2 weeks</option>
 <option>2-4 weeks</option>
 <option>1-3 months</option>
-
 </select>
 
 </div>
@@ -296,12 +297,10 @@ value={property}
 onChange={(e)=>setProperty(e.target.value)}
 className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 >
-
 <option value="">Property Type</option>
 <option>House</option>
 <option>Apartment</option>
 <option>Commercial</option>
-
 </select>
 
 <textarea
@@ -316,31 +315,30 @@ value={heard}
 onChange={(e)=>setHeard(e.target.value)}
 className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 >
-
 <option value="">How did you hear about us?</option>
 <option>Google</option>
 <option>Referral</option>
 <option>Instagram</option>
 <option>Facebook</option>
 <option>Other</option>
-
 </select>
 
 <label className="flex items-center gap-2 text-xs text-white/70">
-
 <input
 type="checkbox"
 checked={consent}
 onChange={(e)=>setConsent(e.target.checked)}
 />
-
 I agree to receive text messages regarding my request.
-
 </label>
 
 <button
-disabled={!canSubmit || status==="sending"}
-className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg transition"
+disabled={missingRequired || status==="sending"}
+className={`w-full py-3 rounded-lg font-semibold transition ${
+missingRequired
+? "bg-gray-600 cursor-not-allowed"
+: "bg-yellow-400 hover:bg-yellow-500 text-black"
+}`}
 >
 
 {status==="sending" ? "Submitting..." : "Get My Free Estimate"}
@@ -350,27 +348,17 @@ className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-
 {/* success */}
 
 {status==="success" && (
-
-<div className="flex items-center gap-2 text-emerald-400 text-sm justify-center mt-2">
-
-<CheckCircle size={18}/>
-Request submitted successfully!
-
+<div className="flex items-center gap-2 text-emerald-400 justify-center text-sm mt-2">
+<CheckCircle size={18}/> Request submitted successfully!
 </div>
-
 )}
 
 {/* error */}
 
 {status==="error" && (
-
-<div className="flex items-center gap-2 text-red-400 text-sm justify-center mt-2">
-
-<AlertCircle size={18}/>
-Something went wrong. Please try again.
-
+<div className="flex items-center gap-2 text-red-400 justify-center text-sm mt-2">
+<AlertCircle size={18}/> Please fill all fields correctly.
 </div>
-
 )}
 
 </form>
@@ -386,5 +374,4 @@ Something went wrong. Please try again.
 </div>
 
 );
-
 }
