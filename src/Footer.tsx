@@ -38,13 +38,14 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="mt-6 flex gap-4 text-xs uppercase tracking-widest text-white/60">
-            <Link to="/privacy" className="hover:text-white">
-              Privacy Policy
-            </Link>
-            <Link to="/terms" className="hover:text-white">
-              Terms of Service
-            </Link>
-          </div>
+  <Link to="/privacy-policy" className="hover:text-white">
+    Privacy Policy
+  </Link>
+
+  <Link to="/terms-of-service" className="hover:text-white">
+    Terms of Service
+  </Link>
+</div>
         </div>
 
         <div>
