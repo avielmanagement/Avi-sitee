@@ -19,8 +19,7 @@ const PHONE_TEL = "+19172755796";
 
 // OPTIONAL: Vercel -> Settings -> Environment Variables
 // Key: VITE_GHL_WEBHOOK_URL
-const GHL_WEBHOOK = import.meta.env.VITE_GHL_WEBHOOK_URL as string | undefined;
-
+const GHL_WEBHOOK = "https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246";
 // Optional: if you want a real background image, paste its URL here
 // (or keep empty to use the premium gradient background)
 const HERO_BG_IMAGE_URL = "";
