@@ -38,7 +38,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="mt-6 flex gap-4 text-xs uppercase tracking-widest text-white/60">
-  <Link to="/privacy-policy" className="hover:text-white">
+  <Link to="/privacy" className="hover:text-white">
     Privacy Policy
   </Link>
 
