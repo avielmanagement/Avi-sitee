@@ -20,6 +20,8 @@ const PHONE_TEL = "+19172755796";
 const GHL_WEBHOOK =
   "https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246";
 
+const HERO_BG_IMAGE_URL = "";
+
 type Status = "idle" | "sending" | "success" | "error";
 
 const formatPhone = (value: string) => {
@@ -29,10 +31,7 @@ const formatPhone = (value: string) => {
   if (numbers.length <= 6)
     return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
 
-  return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(
-    6,
-    10
-  )}`;
+  return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`;
 };
 
 const GetQuote: React.FC = () => {
@@ -47,6 +46,8 @@ const GetQuote: React.FC = () => {
   const [details, setDetails] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
+
+  const isValidPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
 
   const projectOptions = useMemo(
     () => [
@@ -82,8 +83,6 @@ const GetQuote: React.FC = () => {
     ],
     []
   );
-
-  const isValidPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
 
   const canSubmit =
     fullName &&
@@ -156,182 +155,209 @@ const GetQuote: React.FC = () => {
     <div className="min-h-screen bg-black text-white">
       <Navbar />
 
-      <section className="max-w-7xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-12">
+      <section className="relative overflow-hidden">
 
-        {/* LEFT SIDE */}
-        <div>
-          <h1 className="text-6xl font-extrabold leading-tight">
-            FREE <span className="text-yellow-400">ESTIMATES</span>
-          </h1>
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/70 to-black" />
 
-          <p className="mt-6 text-white/70 max-w-xl">
-            Tell us about your project and we’ll provide a clear estimate,
-            timeline, and next steps.
-          </p>
+        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20">
 
-          <div className="mt-10 space-y-3 text-sm text-white/70">
-            <div className="flex gap-2">
-              <Clock3 size={16} /> Same-day replies
+          <div className="grid lg:grid-cols-2 gap-10 items-start">
+
+            {/* LEFT */}
+            <div>
+
+              <div className="text-[12px] tracking-[0.35em] text-white/60 uppercase">
+                Aviel Management Inc.
+              </div>
+
+              <h1 className="mt-3 font-display leading-[0.95]">
+                <span className="block text-6xl md:text-7xl font-extrabold">
+                  FREE
+                </span>
+                <span className="block text-6xl md:text-7xl font-extrabold text-brand-gold">
+                  ESTIMATES
+                </span>
+              </h1>
+
+              <p className="mt-5 text-white/70 max-w-xl">
+                Tell us about your project and receive a fast estimate,
+                timeline, and next steps.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">
+                  <Clock3 className="h-4 w-4 text-emerald-400" />
+                  Same-day replies
+                </span>
+
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">
+                  <ShieldCheck className="h-4 w-4 text-brand-gold" />
+                  Licensed & insured
+                </span>
+
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-white/80">
+                  <BadgeCheck className="h-4 w-4 text-white/80" />
+                  Quality craftsmanship
+                </span>
+
+              </div>
+
             </div>
-            <div className="flex gap-2">
-              <ShieldCheck size={16} /> Licensed & insured
+
+            {/* FORM */}
+            <div className="relative">
+
+              <div className="relative rounded-3xl border border-white/12 bg-black/55 backdrop-blur-xl shadow-2xl overflow-hidden">
+
+                <div className="p-6 md:p-8 border-b border-white/10">
+                  <h2 className="text-2xl font-semibold">Request Callback</h2>
+                  <p className="text-sm text-white/60 mt-1">
+                    Fill this out and we'll contact you about your quote.
+                  </p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-4">
+
+                  <input
+                    placeholder="Full Name"
+                    className="w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                  />
+
+                  <input
+                    placeholder="(917) 555-1234"
+                    className="w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    required
+                  />
+
+                  {!isValidPhone && phone.length > 0 && (
+                    <p className="text-red-400 text-xs">Invalid phone number</p>
+                  )}
+
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className="w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+
+                  <div className="grid md:grid-cols-2 gap-4">
+
+                    <input
+                      placeholder="Property Address"
+                      className="rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                      value={address}
+                      onChange={(e) => setAddress(e.target.value)}
+                      required
+                    />
+
+                    <input
+                      placeholder="ZIP"
+                      className="rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                      value={zip}
+                      maxLength={5}
+                      onChange={(e) =>
+                        setZip(e.target.value.replace(/\D/g, "").slice(0, 5))
+                      }
+                      required
+                    />
+
+                  </div>
+
+                  <select
+                    value={projectType}
+                    onChange={(e) => setProjectType(e.target.value)}
+                    className="w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                    required
+                  >
+                    {projectOptions.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+
+                    <select
+                      value={budget}
+                      onChange={(e) => setBudget(e.target.value)}
+                      className="rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                      required
+                    >
+                      {budgetOptions.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={timeline}
+                      onChange={(e) => setTimeline(e.target.value)}
+                      className="rounded-xl bg-black/45 border border-white/10 px-3 py-2"
+                      required
+                    >
+                      {timelineOptions.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+
+                  <textarea
+                    placeholder="Project details..."
+                    className="w-full rounded-xl bg-black/45 border border-white/10 px-3 py-2 min-h-[120px]"
+                    value={details}
+                    onChange={(e) => setDetails(e.target.value)}
+                    required
+                  />
+
+                  <label className="flex items-start gap-3 text-xs text-white/70">
+                    <input
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      required
+                    />
+                    I agree to receive text messages regarding my request.
+                  </label>
+
+                  <button
+                    type="submit"
+                    disabled={!canSubmit || status === "sending"}
+                    className="w-full rounded-xl bg-gradient-to-r from-brand-gold to-yellow-400 text-black font-bold py-3 hover:scale-[1.02] transition-all shadow-lg shadow-yellow-500/20"
+                  >
+                    {status === "sending"
+                      ? "Submitting..."
+                      : "Get My Free Estimate"}
+                  </button>
+
+                  <div className="flex justify-center gap-6 text-[11px] text-white/50 mt-3">
+                    <span>✔ Fast response</span>
+                    <span>✔ Licensed</span>
+                    <span>✔ Free estimate</span>
+                  </div>
+
+                </form>
+
+              </div>
+
             </div>
-            <div className="flex gap-2">
-              <BadgeCheck size={16} /> Professional crews
-            </div>
+
           </div>
 
-          <div className="mt-10 flex gap-6 text-sm">
-            <a href={`tel:${PHONE_TEL}`} className="flex items-center gap-2">
-              <PhoneCall size={16} />
-              {PHONE_DISPLAY}
-            </a>
-
-            <a href={`mailto:${EMAIL}`} className="flex items-center gap-2">
-              <Mail size={16} />
-              {EMAIL}
-            </a>
-          </div>
         </div>
 
-        {/* FORM */}
-        <div className="rounded-3xl border border-white/10 bg-black/60 p-8 backdrop-blur-xl">
-
-          <h2 className="text-2xl font-semibold mb-6">Request Callback</h2>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-
-            <input
-              placeholder="Full Name"
-              className="w-full rounded-xl bg-black border border-white/10 px-3 py-2"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
-
-            <input
-              placeholder="(917) 555-1234"
-              className="w-full rounded-xl bg-black border border-white/10 px-3 py-2"
-              value={phone}
-              onChange={handlePhoneChange}
-              required
-            />
-
-            {!isValidPhone && phone.length > 0 && (
-              <p className="text-red-400 text-xs">Enter a valid phone number</p>
-            )}
-
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full rounded-xl bg-black border border-white/10 px-3 py-2"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                placeholder="Property Address"
-                className="rounded-xl bg-black border border-white/10 px-3 py-2"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
-              />
-
-              <input
-                placeholder="ZIP"
-                className="rounded-xl bg-black border border-white/10 px-3 py-2"
-                value={zip}
-                maxLength={5}
-                onChange={(e) =>
-                  setZip(e.target.value.replace(/\D/g, "").slice(0, 5))
-                }
-                required
-              />
-            </div>
-
-            <select
-              value={projectType}
-              onChange={(e) => setProjectType(e.target.value)}
-              className="w-full rounded-xl bg-black border border-white/10 px-3 py-2"
-              required
-            >
-              {projectOptions.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-
-            <div className="grid grid-cols-2 gap-4">
-              <select
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                className="rounded-xl bg-black border border-white/10 px-3 py-2"
-                required
-              >
-                {budgetOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-
-              <select
-                value={timeline}
-                onChange={(e) => setTimeline(e.target.value)}
-                className="rounded-xl bg-black border border-white/10 px-3 py-2"
-                required
-              >
-                {timelineOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <textarea
-              placeholder="Project details..."
-              className="w-full rounded-xl bg-black border border-white/10 px-3 py-2 min-h-[120px]"
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-              required
-            />
-
-            <label className="flex gap-2 text-xs text-white/70">
-              <input
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                required
-              />
-              I agree to receive text messages regarding my request.
-            </label>
-
-            <button
-              type="submit"
-              disabled={!canSubmit || status === "sending"}
-              className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-bold py-3 rounded-xl hover:scale-[1.02] transition"
-            >
-              {status === "sending" ? "Submitting..." : "Get My Free Estimate"}
-            </button>
-
-            {status === "success" && (
-              <p className="text-green-400 text-center">
-                Submitted! We will contact you shortly.
-              </p>
-            )}
-
-            {status === "error" && (
-              <p className="text-red-400 text-center">
-                Something went wrong. Please call {PHONE_DISPLAY}.
-              </p>
-            )}
-
-          </form>
-        </div>
       </section>
 
       <Footer />
