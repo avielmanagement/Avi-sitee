@@ -119,7 +119,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     if (!GHL_WEBHOOK) {
       console.warn("Webhook URL missing");
-      setStatus("error");
       return;
     }
 
@@ -140,7 +139,6 @@ const handleSubmit = async (e: React.FormEvent) => {
     setStatus("error");
   }
 };
-
     try {
       const payload = {
         fullName,
