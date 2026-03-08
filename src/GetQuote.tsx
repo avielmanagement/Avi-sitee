@@ -139,41 +139,6 @@ const handleSubmit = async (e: React.FormEvent) => {
     setStatus("error");
   }
 };
-    try {
-      const payload = {
-        fullName,
-        phone,
-        email,
-        projectType,
-        budget,
-        timeline,
-        details,
-        consent: true,
-        source: "Website - Get Quote Page",
-        page: "get-quote",
-      };
-
-      if (GHL_WEBHOOK) {
-        const res = await fetch(GHL_WEBHOOK, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-  },
-  body: new URLSearchParams(payload).toString(),
-});
-        if (!res.ok) throw new Error("Webhook failed");
-      } else {
-        // still allow UI testing
-        console.warn("No VITE_GHL_WEBHOOK_URL set. Form isn't sending anywhere yet.");
-      }
-
-      setStatus("success");
-      reset();
-    } catch (err) {
-      console.error(err);
-      setStatus("error");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black text-white">
