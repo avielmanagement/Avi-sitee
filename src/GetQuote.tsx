@@ -94,11 +94,41 @@ const GetQuote: React.FC = () => {
     setConsent(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!canSubmit) return;
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!canSubmit) return;
 
-    setStatus("sending");
+  setStatus("sending");
+
+  try {
+    const payload = {
+      name: fullName,
+      phone: phone,
+      email: email,
+      projectType: projectType,
+      budget: budget,
+      timeline: timeline,
+      details: details,
+      source: "Website - Get Quote Page",
+    };
+
+    const res = await fetch(GHL_WEBHOOK, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(payload).toString(),
+    });
+
+    if (!res.ok) throw new Error("Webhook failed");
+
+    setStatus("success");
+    reset();
+  } catch (err) {
+    console.error(err);
+    setStatus("error");
+  }
+};
 
     try {
       const payload = {
