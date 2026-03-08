@@ -1,363 +1,300 @@
 import React, { useState } from "react";
-import {
-Clock3,
-ShieldCheck,
-BadgeCheck,
-Hammer,
-Zap,
-Trash2,
-Shield,
-CheckCircle,
-AlertCircle
-} from "lucide-react";
 
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+const GHL_WEBHOOK = "PASTE_YOUR_WEBHOOK_URL";
 
-const WEBHOOK =
-"https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246";
+export default function QuoteForm() {
 
-type Status = "idle" | "sending" | "success" | "error";
+const [form, setForm] = useState({
+name: "",
+phone: "",
+email: "",
+zip: "",
+service: "",
+details: "",
+heard: ""
+});
 
-const formatPhone = (value: string) => {
-const numbers = value.replace(/\D/g, "").slice(0, 10);
+const [status, setStatus] = useState("");
+const [errors, setErrors] = useState<any>({});
 
-if (numbers.length <= 3) return numbers;
-if (numbers.length <= 6)
-return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
+const validate = () => {
 
-return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`;
+let newErrors:any = {};
+
+if (!form.name) newErrors.name = "Full name required";
+
+if (!form.phone) newErrors.phone = "Phone required";
+
+if (!form.email.includes("@") || !form.email.includes(".com"))
+newErrors.email = "Enter valid email";
+
+if (!/^\d{5}$/.test(form.zip))
+newErrors.zip = "ZIP must be 5 numbers";
+
+if (!form.service) newErrors.service = "Select a service";
+
+if (!form.details) newErrors.details = "Project details required";
+
+setErrors(newErrors);
+
+return Object.keys(newErrors).length === 0;
+
 };
 
-export default function GetQuote() {
+const handleChange = (e:any) => {
 
-const [status,setStatus] = useState<Status>("idle");
+setForm({
+...form,
+[e.target.name]: e.target.value
+});
 
-const [name,setName] = useState("");
-const [phone,setPhone] = useState("");
-const [email,setEmail] = useState("");
-const [zip,setZip] = useState("");
+};
 
-const [service,setService] = useState("");
-const [details,setDetails] = useState("");
-const [heard,setHeard] = useState("");
-
-const [consent,setConsent] = useState(false);
-
-/* validation */
-
-const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
-const validEmail = /^[^\s@]+@[^\s@]+\.(com|net|org)$/i.test(email);
-const validZip = /^\d{5}$/.test(zip);
-
-const formValid =
-name &&
-validPhone &&
-validEmail &&
-validZip &&
-service &&
-details &&
-heard &&
-consent;
-
-const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e:any) => {
 
 e.preventDefault();
 
-if(!formValid){
-setStatus("error");
-return;
-}
+if (!validate()) return;
 
 setStatus("sending");
 
-try{
+try {
 
 const payload = {
-  name,
-  phone,
-  email,
-  "contact.service_requested": service,
-  "contact.project_details": details,
-  "contact.how_did_you_hear_about_us": heard,
-  "contact.zip_code": zip
+name: form.name,
+phone: form.phone,
+email: form.email,
+"contact.zip_code": form.zip,
+"contact.service_requested": form.service,
+"contact.project_details": form.details,
+"contact.how_did_you_hear_about_us": form.heard,
+source: "Website Quote"
 };
 
-const res = await fetch(WEBHOOK,{
-method:"POST",
-headers:{
-"Content-Type":"application/x-www-form-urlencoded"
+const res = await fetch(GHL_WEBHOOK, {
+method: "POST",
+headers: {
+"Content-Type": "application/x-www-form-urlencoded"
 },
-body:new URLSearchParams(payload as Record<string,string>).toString()
+body: new URLSearchParams(payload).toString()
 });
 
-if(!res.ok) throw new Error();
+if (!res.ok) throw new Error("Webhook error");
 
 setStatus("success");
 
-setName("");
-setPhone("");
-setEmail("");
-setZip("");
-setService("");
-setDetails("");
-setHeard("");
-setConsent(false);
+setForm({
+name:"",
+phone:"",
+email:"",
+zip:"",
+service:"",
+details:"",
+heard:""
+});
 
-}catch{
+} catch {
 setStatus("error");
 }
 
 };
 
-return(
+return (
 
-<div className="min-h-screen bg-black text-white relative overflow-hidden">
+<div style={{
+background:"#0b0b0b",
+padding:"30px",
+borderRadius:"14px",
+boxShadow:"0 0 30px rgba(255,193,7,0.08)",
+border:"1px solid rgba(255,255,255,0.05)"
+}}>
 
-{/* gold glow background */}
-
-<div className="absolute -top-40 -left-40 w-[700px] h-[700px] bg-yellow-500/20 blur-[160px] rounded-full animate-pulse"/>
-
-<Navbar/>
-
-<section className="max-w-7xl mx-auto px-6 py-20">
-
-<div className="grid lg:grid-cols-2 gap-16 items-start">
-
-{/* LEFT */}
-
-<div>
-
-<p className="text-xs tracking-[0.35em] text-white/50 uppercase">
-AVIEL MANAGEMENT INC
-</p>
-
-<h1 className="mt-4 text-7xl font-extrabold leading-none">
-
-<span className="block text-white">
-FREE
-</span>
-
-<span className="block text-yellow-400">
-ESTIMATES
-</span>
-
-</h1>
-
-<p className="mt-6 text-white/70 max-w-xl">
-Tell us about your project and receive a fast estimate,
-timeline and next steps from experienced NYC contractors.
-</p>
-
-{/* badges */}
-
-<div className="flex flex-wrap gap-3 mt-8">
-
-<div className="flex items-center gap-2 border border-white/10 px-4 py-2 rounded-lg">
-<Clock3 size={16}/> Same day replies
-</div>
-
-<div className="flex items-center gap-2 border border-white/10 px-4 py-2 rounded-lg">
-<ShieldCheck size={16}/> Licensed & insured
-</div>
-
-<div className="flex items-center gap-2 border border-white/10 px-4 py-2 rounded-lg">
-<BadgeCheck size={16}/> Quality craftsmanship
-</div>
-
-</div>
-
-{/* service cards */}
-
-<div className="grid grid-cols-2 gap-4 mt-10">
-
-<button
-onClick={()=>setService("General Construction")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
-service==="General Construction"
-?"border-yellow-400 bg-yellow-400/10"
-:"border-white/10"
-}`}
->
-<Hammer size={18}/> General Construction
-</button>
-
-<button
-onClick={()=>setService("EV Charger Installation")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
-service==="EV Charger Installation"
-?"border-yellow-400 bg-yellow-400/10"
-:"border-white/10"
-}`}
->
-<Zap size={18}/> EV Charger Installation
-</button>
-
-<button
-onClick={()=>setService("Junk Removal")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
-service==="Junk Removal"
-?"border-yellow-400 bg-yellow-400/10"
-:"border-white/10"
-}`}
->
-<Trash2 size={18}/> Junk Removal
-</button>
-
-<button
-onClick={()=>setService("Roofing")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
-service==="Roofing"
-?"border-yellow-400 bg-yellow-400/10"
-:"border-white/10"
-}`}
->
-<Shield size={18}/> Roofing
-</button>
-
-</div>
-
-</div>
-
-{/* FORM */}
-
-<div className="bg-black/70 border border-white/10 rounded-3xl p-8 shadow-xl">
-
-<h2 className="text-2xl font-semibold">
+<h2 style={{
+color:"#fff",
+marginBottom:"5px",
+fontSize:"22px"
+}}>
 Request Callback
 </h2>
 
-<p className="text-sm text-white/60 mb-6">
+<p style={{color:"#aaa",marginBottom:"20px"}}>
 Fill this out and we'll contact you shortly.
 </p>
 
-<form onSubmit={handleSubmit} className="space-y-4">
+<form onSubmit={handleSubmit}>
 
-<div className="grid grid-cols-2 gap-3">
+<div className="row">
 
 <input
+name="name"
 placeholder="Full Name"
-value={name}
-onChange={e=>setName(e.target.value)}
-className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!name && status==="error" ? "border-red-500":"border-white/10"
-}`}
+value={form.name}
+onChange={handleChange}
 />
 
+{errors.name && <span className="error">{errors.name}</span>}
+
 <input
-placeholder="(917) 555-1234"
-value={phone}
-onChange={e=>setPhone(formatPhone(e.target.value))}
-className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!validPhone && status==="error" ? "border-red-500":"border-white/10"
-}`}
+name="phone"
+placeholder="Phone"
+value={form.phone}
+onChange={handleChange}
 />
+
+{errors.phone && <span className="error">{errors.phone}</span>}
 
 </div>
 
-<div className="grid grid-cols-2 gap-3">
+<div className="row">
 
 <input
+name="email"
 placeholder="Email"
-value={email}
-onChange={e=>setEmail(e.target.value)}
-className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!validEmail && status==="error" ? "border-red-500":"border-white/10"
-}`}
+value={form.email}
+onChange={handleChange}
 />
 
+{errors.email && <span className="error">{errors.email}</span>}
+
 <input
+name="zip"
 placeholder="ZIP Code"
-value={zip}
-onChange={e=>setZip(e.target.value.replace(/\D/g,"").slice(0,5))}
-className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!validZip && status==="error" ? "border-red-500":"border-white/10"
-}`}
+value={form.zip}
+onChange={handleChange}
 />
+
+{errors.zip && <span className="error">{errors.zip}</span>}
 
 </div>
 
 <select
-value={service}
-onChange={e=>setService(e.target.value)}
-className="bg-black border border-white/10 px-3 py-2 rounded-lg w-full"
+name="service"
+value={form.service}
+onChange={handleChange}
 >
 <option value="">Service Requested</option>
-<option>General Construction</option>
-<option>Roofing</option>
-<option>Junk Removal</option>
-<option>EV Charger Installation</option>
+<option value="General Construction">General Construction</option>
+<option value="EV Charger Installation">EV Charger Installation</option>
+<option value="Junk Removal & Demo">Junk Removal & Demo</option>
+<option value="Roofing">Roofing</option>
 </select>
+
+{errors.service && <span className="error">{errors.service}</span>}
 
 <textarea
+name="details"
 placeholder="Project details"
-value={details}
-onChange={e=>setDetails(e.target.value)}
-className={`bg-black border px-3 py-2 rounded-lg w-full h-28 ${
-!details && status==="error" ? "border-red-500":"border-white/10"
-}`}
+value={form.details}
+onChange={handleChange}
 />
+
+{errors.details && <span className="error">{errors.details}</span>}
 
 <select
-value={heard}
-onChange={e=>setHeard(e.target.value)}
-className="bg-black border border-white/10 px-3 py-2 rounded-lg w-full"
+name="heard"
+value={form.heard}
+onChange={handleChange}
 >
-<option value="">How did you hear about us?</option>
-<option>Google</option>
-<option>Referral</option>
-<option>Instagram</option>
-<option>Facebook</option>
-<option>Other</option>
+<option value="">How Did You Hear About Us?</option>
+<option value="Google">Google</option>
+<option value="Referral">Referral</option>
+<option value="Instagram">Instagram</option>
+<option value="Facebook">Facebook</option>
+<option value="Other">Other</option>
 </select>
 
-<label className="flex items-center gap-2 text-xs text-white/70">
-
-<input
-type="checkbox"
-checked={consent}
-onChange={e=>setConsent(e.target.checked)}
-/>
-
-I agree to receive text messages regarding my request.
-
-</label>
-
 <button
-disabled={!formValid || status==="sending"}
-className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
-!formValid
-?"bg-gray-600 cursor-not-allowed"
-:"bg-yellow-400 text-black hover:bg-yellow-500 hover:shadow-[0_0_20px_rgba(255,200,0,0.6)]"
-}`}
+type="submit"
+className="submit"
+disabled={status === "sending"}
 >
-{status==="sending"?"Submitting...":"Get My Free Estimate"}
+
+{status === "sending"
+? "Sending..."
+: "Get My FREE Estimate"}
+
 </button>
 
-{status==="success" && (
-<p className="text-green-400 text-center flex justify-center gap-2">
-<CheckCircle size={18}/> Request sent successfully
-</p>
-)}
+{status === "success" &&
+<p className="success">
+Your request was sent. We'll contact you shortly.
+</p>}
 
-{status==="error" && (
-<p className="text-red-400 text-center flex justify-center gap-2">
-<AlertCircle size={18}/> Please fill all fields correctly
-</p>
-)}
+{status === "error" &&
+<p className="error">
+Something went wrong. Please try again.
+</p>}
 
 </form>
 
-</div>
+<style>{`
+
+.row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:10px;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+background:#111;
+border:1px solid #2a2a2a;
+border-radius:8px;
+color:white;
+outline:none;
+transition:all .25s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+border-color:#ffc107;
+box-shadow:0 0 10px rgba(255,193,7,.3);
+}
+
+textarea{
+height:90px;
+resize:none;
+margin-top:10px;
+}
+
+.submit{
+margin-top:15px;
+width:100%;
+padding:14px;
+background:#4b5563;
+border:none;
+border-radius:8px;
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:all .3s ease;
+}
+
+.submit:hover{
+background:#ffc107;
+color:black;
+box-shadow:0 0 20px rgba(255,193,7,.5);
+}
+
+.error{
+color:#ff4d4d;
+font-size:12px;
+display:block;
+margin-bottom:6px;
+}
+
+.success{
+color:#00e676;
+margin-top:10px;
+font-size:14px;
+}
+
+`}</style>
 
 </div>
-
-</section>
-
-<Footer/>
-
-</div>
-
 );
 
 }
