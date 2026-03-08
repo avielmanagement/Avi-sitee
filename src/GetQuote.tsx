@@ -42,33 +42,35 @@ const [zip,setZip] = useState("");
 const [service,setService] = useState("");
 const [budget,setBudget] = useState("");
 const [timeline,setTimeline] = useState("");
-const [property,setProperty] = useState("");
 const [details,setDetails] = useState("");
 const [heard,setHeard] = useState("");
 
 const [consent,setConsent] = useState(false);
 
-const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
+/* VALIDATION */
 
-const missingRequired =
-!name ||
-!email ||
-!validPhone ||
-!address ||
-!zip ||
-!service ||
-!budget ||
-!timeline ||
-!property ||
-!details ||
-!heard ||
-!consent;
+const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
+const validEmail = /^[^\s@]+@[^\s@]+\.(com|net|org)$/i.test(email);
+const validZip = /^\d{5}$/.test(zip);
+
+const formValid =
+name &&
+validPhone &&
+validEmail &&
+address &&
+validZip &&
+service &&
+budget &&
+timeline &&
+details &&
+heard &&
+consent;
 
 const handleSubmit = async (e:React.FormEvent)=>{
 
 e.preventDefault();
 
-if(missingRequired){
+if(!formValid){
 setStatus("error");
 return;
 }
@@ -85,10 +87,9 @@ email,
 
 service_requested:service,
 project_address:address,
-zip,
+zip_code:zip,
 estimated_budget:budget,
 project_timeline:timeline,
-property_type:property,
 project_details:details,
 heard_about_us:heard,
 
@@ -120,9 +121,9 @@ return(
 
 <div className="min-h-screen bg-black text-white relative overflow-hidden">
 
-{/* animated glow */}
+{/* glow background */}
 
-<div className="absolute w-[700px] h-[700px] bg-yellow-500/20 blur-[180px] rounded-full -left-60 top-10 animate-pulse"/>
+<div className="absolute w-[800px] h-[800px] bg-yellow-500/20 blur-[200px] rounded-full -left-64 top-0 animate-pulse"/>
 
 <Navbar/>
 
@@ -161,15 +162,15 @@ timeline and next steps from experienced NYC contractors.
 
 <div className="flex flex-wrap gap-3 mt-8">
 
-<div className="flex items-center gap-2 border border-white/10 bg-white/5 px-4 py-2 rounded-full text-sm">
+<div className="badge">
 <Clock3 size={16}/> Same day replies
 </div>
 
-<div className="flex items-center gap-2 border border-white/10 bg-white/5 px-4 py-2 rounded-full text-sm">
+<div className="badge">
 <ShieldCheck size={16}/> Licensed & insured
 </div>
 
-<div className="flex items-center gap-2 border border-white/10 bg-white/5 px-4 py-2 rounded-full text-sm">
+<div className="badge">
 <BadgeCheck size={16}/> Quality craftsmanship
 </div>
 
@@ -179,19 +180,19 @@ timeline and next steps from experienced NYC contractors.
 
 <div className="grid grid-cols-2 gap-4 mt-10">
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
+<div className="service">
 <Hammer size={18}/> General Construction
 </div>
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
+<div className="service">
 <Zap size={18}/> EV Charger Install
 </div>
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
+<div className="service">
 <Trash2 size={18}/> Junk Removal
 </div>
 
-<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3 hover:bg-white/10 transition">
+<div className="service">
 <Shield size={18}/> Roofing
 </div>
 
@@ -213,49 +214,57 @@ Fill this out and we'll contact you shortly.
 
 <form onSubmit={handleSubmit} className="space-y-4">
 
+{/* NAME */}
+
 <input
 placeholder="Full Name"
 value={name}
 onChange={(e)=>setName(e.target.value)}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!name && status==="error" ? "border-red-500":""}`}
 />
+
+{/* PHONE */}
 
 <input
 placeholder="(917) 555-1234"
 value={phone}
 onChange={(e)=>setPhone(formatPhone(e.target.value))}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!validPhone && status==="error" ? "border-red-500":""}`}
 />
+
+{/* EMAIL */}
 
 <input
 placeholder="Email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!validEmail && status==="error" ? "border-red-500":""}`}
 />
 
-<div className="grid grid-cols-2 gap-3">
+{/* ADDRESS */}
 
 <input
 placeholder="Project Address"
 value={address}
 onChange={(e)=>setAddress(e.target.value)}
-className="bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!address && status==="error" ? "border-red-500":""}`}
 />
+
+{/* ZIP */}
 
 <input
-placeholder="ZIP"
+placeholder="ZIP Code"
 value={zip}
-onChange={(e)=>setZip(e.target.value)}
-className="bg-black border border-white/10 rounded-lg px-3 py-2"
+onChange={(e)=>setZip(e.target.value.replace(/\D/g,"").slice(0,5))}
+className={`input ${!validZip && status==="error" ? "border-red-500":""}`}
 />
 
-</div>
+{/* SERVICE */}
 
 <select
 value={service}
 onChange={(e)=>setService(e.target.value)}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!service && status==="error" ? "border-red-500":""}`}
 >
 <option value="">Service Requested</option>
 <option>General Construction</option>
@@ -264,12 +273,12 @@ className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 <option>EV Charger Installation</option>
 </select>
 
-<div className="grid grid-cols-2 gap-3">
+{/* BUDGET */}
 
 <select
 value={budget}
 onChange={(e)=>setBudget(e.target.value)}
-className="bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!budget && status==="error" ? "border-red-500":""}`}
 >
 <option value="">Estimated Budget</option>
 <option>$1k-$5k</option>
@@ -278,10 +287,12 @@ className="bg-black border border-white/10 rounded-lg px-3 py-2"
 <option>$50k+</option>
 </select>
 
+{/* TIMELINE */}
+
 <select
 value={timeline}
 onChange={(e)=>setTimeline(e.target.value)}
-className="bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!timeline && status==="error" ? "border-red-500":""}`}
 >
 <option value="">Project Timeline</option>
 <option>ASAP</option>
@@ -290,30 +301,21 @@ className="bg-black border border-white/10 rounded-lg px-3 py-2"
 <option>1-3 months</option>
 </select>
 
-</div>
-
-<select
-value={property}
-onChange={(e)=>setProperty(e.target.value)}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
->
-<option value="">Property Type</option>
-<option>House</option>
-<option>Apartment</option>
-<option>Commercial</option>
-</select>
+{/* DETAILS */}
 
 <textarea
 placeholder="Project details"
 value={details}
 onChange={(e)=>setDetails(e.target.value)}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2 h-28"
+className={`input h-28 ${!details && status==="error" ? "border-red-500":""}`}
 />
+
+{/* HEARD */}
 
 <select
 value={heard}
 onChange={(e)=>setHeard(e.target.value)}
-className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
+className={`input ${!heard && status==="error" ? "border-red-500":""}`}
 >
 <option value="">How did you hear about us?</option>
 <option>Google</option>
@@ -322,6 +324,8 @@ className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 <option>Facebook</option>
 <option>Other</option>
 </select>
+
+{/* CONSENT */}
 
 <label className="flex items-center gap-2 text-xs text-white/70">
 <input
@@ -333,9 +337,9 @@ I agree to receive text messages regarding my request.
 </label>
 
 <button
-disabled={missingRequired || status==="sending"}
+disabled={!formValid || status==="sending"}
 className={`w-full py-3 rounded-lg font-semibold transition ${
-missingRequired
+!formValid
 ? "bg-gray-600 cursor-not-allowed"
 : "bg-yellow-400 hover:bg-yellow-500 text-black"
 }`}
@@ -345,20 +349,30 @@ missingRequired
 
 </button>
 
-{/* success */}
+{/* SUCCESS */}
 
 {status==="success" && (
-<div className="flex items-center gap-2 text-emerald-400 justify-center text-sm mt-2">
-<CheckCircle size={18}/> Request submitted successfully!
+
+<div className="flex items-center gap-2 text-emerald-400 text-sm justify-center mt-2">
+
+<CheckCircle size={18}/>
+Request submitted successfully!
+
 </div>
+
 )}
 
-{/* error */}
+{/* ERROR */}
 
-{status==="error" && (
-<div className="flex items-center gap-2 text-red-400 justify-center text-sm mt-2">
-<AlertCircle size={18}/> Please fill all fields correctly.
+{status==="error" && !formValid && (
+
+<div className="flex items-center gap-2 text-red-400 text-sm justify-center mt-2">
+
+<AlertCircle size={18}/>
+Please fill all fields correctly.
+
 </div>
+
 )}
 
 </form>
