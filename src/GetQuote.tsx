@@ -273,15 +273,21 @@ className="input"
 
 </select>
 
-<label className="flex items-center gap-2 text-xs text-gray-400">
+<label className="flex items-start gap-2 text-xs text-gray-400 leading-relaxed">
 
 <input
 type="checkbox"
 checked={consent}
 onChange={(e)=>setConsent(e.target.checked)}
+className="mt-1"
 />
 
-I agree to receive text messages regarding my request.
+<span>
+By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, scheduling updates, and service notifications.  
+Message frequency varies depending on your request.  
+Message and data rates may apply.  
+Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for assistance.
+</span>
 
 </label>
 
