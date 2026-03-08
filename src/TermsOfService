@@ -1,137 +1,130 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const PrivacyPolicy: React.FC = () => {
+const Section: React.FC<{ title: string; children: React.ReactNode }> = ({
+  title,
+  children,
+}) => (
+  <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+    <h2 className="text-xl md:text-2xl font-semibold text-white">{title}</h2>
+    <div className="mt-3 text-sm md:text-base text-white/70 leading-relaxed space-y-3">
+      {children}
+    </div>
+  </section>
+);
+
+export default function TermsOfService() {
   return (
-    <div className="min-h-screen bg-black text-white px-6 py-20">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen bg-black text-white">
+      <div className="max-w-4xl mx-auto px-6 pt-28 pb-16">
 
-        <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
+        <header className="mb-10">
+          <div className="text-[11px] uppercase tracking-[0.35em] text-white/50">
+            Legal
+          </div>
 
-        <p className="text-gray-400 mb-6">
-          This Privacy Policy describes how <strong>Aviel Management Inc</strong> collects,
-          uses, and protects the information you provide when using our website
-          or services.
-        </p>
+          <h1 className="mt-3 text-4xl md:text-5xl font-bold">
+            Terms of Service
+          </h1>
 
-        {/* INFORMATION COLLECTED */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">Information We Collect</h2>
-        <p className="text-gray-400 mb-6">
-          When you submit a form on our website, request a quote, or contact us,
-          we may collect the following information:
-        </p>
+          <p className="mt-3 text-white/70">
+            These Terms of Service govern the use of
+            services provided by Aviel Management Inc.
+          </p>
 
-        <ul className="list-disc list-inside text-gray-400 space-y-2 mb-6">
-          <li>Name</li>
-          <li>Phone number</li>
-          <li>Email address</li>
-          <li>ZIP code or service location</li>
-          <li>Project details or service request information</li>
-        </ul>
+          <Link
+            to="/privacy-policy"
+            className="inline-block mt-4 text-yellow-400 hover:underline"
+          >
+            View Privacy Policy
+          </Link>
+        </header>
 
-        {/* HOW DATA IS USED */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">How We Use Your Information</h2>
-        <p className="text-gray-400 mb-6">
-          The information you provide is used only for legitimate business purposes,
-          including:
-        </p>
+        <div className="space-y-6">
 
-        <ul className="list-disc list-inside text-gray-400 space-y-2 mb-6">
-          <li>Responding to quote requests</li>
-          <li>Scheduling consultations or services</li>
-          <li>Providing project updates or service notifications</li>
-          <li>Customer support and communication</li>
-        </ul>
+          <Section title="Service Description">
+            <p>
+              Aviel Management Inc. provides construction,
+              EV charger installation, junk removal,
+              demolition, roofing, and related services.
+            </p>
+          </Section>
 
-        {/* SMS DISCLOSURE */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">SMS Communications</h2>
+          <Section title="SMS Messaging Terms">
+            <p>
+              By submitting your phone number on our website,
+              you agree to receive SMS messages from
+              <strong> Aviel Management Inc.</strong>
+            </p>
 
-        <p className="text-gray-400 mb-4">
-          If you provide your phone number and consent to receive text messages,
-          you may receive SMS messages from <strong>Aviel Management Inc</strong>
-          related to your service request.
-        </p>
+            <p>
+              These messages may include appointment confirmations,
+              service notifications, estimate updates,
+              and project communications.
+            </p>
 
-        <p className="text-gray-400 mb-6">
-          These messages may include appointment confirmations, estimate updates,
-          scheduling notifications, or service-related communications.
-        </p>
+            <p>
+              Message frequency varies.
+              Message and data rates may apply.
+              Reply <strong>STOP</strong> to unsubscribe.
+              Reply <strong>HELP</strong> for assistance.
+            </p>
+          </Section>
 
-        <p className="text-gray-400 mb-6">
-          Message frequency varies depending on your interaction with our
-          services. Message and data rates may apply. You may reply
-          <strong> STOP</strong> at any time to unsubscribe or
-          <strong> HELP</strong> for assistance.
-        </p>
+          <Section title="User Responsibilities">
+            <p>
+              You agree to provide accurate information
+              when requesting services or submitting forms.
+            </p>
+          </Section>
 
-        {/* NON SHARING CLAUSE */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">
-          Mobile Information Sharing
-        </h2>
+          <Section title="Carrier Liability">
+            <p>
+              Mobile carriers are not responsible for
+              delayed or undelivered SMS messages.
+            </p>
+          </Section>
 
-        <p className="text-gray-400 mb-6">
-          Mobile information will not be shared, sold, rented, or distributed to
-          third parties or affiliates for marketing or promotional purposes.
-        </p>
+          <Section title="Age Requirement">
+            <p>
+              You must be at least 18 years old
+              to request services through our website.
+            </p>
+          </Section>
 
-        {/* COOKIES */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">
-          Cookies and Tracking
-        </h2>
+          <Section title="Contact Information">
+            <p className="font-medium text-white">
+              Aviel Management Inc.
+            </p>
 
-        <p className="text-gray-400 mb-6">
-          Our website may use cookies or similar technologies to improve user
-          experience, analyze website traffic, and enhance functionality.
-        </p>
+            <p>
+              Phone:{" "}
+              <a
+                href="tel:9172755796"
+                className="text-yellow-400 hover:underline"
+              >
+                (917) 275-5796
+              </a>
+            </p>
 
-        {/* DATA SECURITY */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">
-          Data Security
-        </h2>
+            <p>
+              Email:{" "}
+              <a
+                href="mailto:info@avielmanagementinc.com"
+                className="text-yellow-400 hover:underline"
+              >
+                info@avielmanagementinc.com
+              </a>
+            </p>
+          </Section>
 
-        <p className="text-gray-400 mb-6">
-          We take reasonable precautions to protect your personal information
-          from unauthorized access, disclosure, or misuse.
-        </p>
+        </div>
 
-        {/* USER RIGHTS */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">
-          Your Rights
-        </h2>
-
-        <p className="text-gray-400 mb-6">
-          You may request access to, correction of, or deletion of your personal
-          information at any time by contacting us.
-        </p>
-
-        {/* CONTACT */}
-        <h2 className="text-2xl font-semibold mt-10 mb-3">
-          Contact Information
-        </h2>
-
-        <p className="text-gray-400 mb-6">
-          If you have questions regarding this Privacy Policy or your data,
-          please contact:
-        </p>
-
-        <p className="text-gray-400 mb-2">
-          <strong>Aviel Management Inc</strong>
-        </p>
-
-        <p className="text-gray-400 mb-2">
-          Phone: (917) 275-5796
-        </p>
-
-        <p className="text-gray-400 mb-10">
-          Email: info@avielmanagementinc.com
-        </p>
-
-        <p className="text-gray-500 text-sm">
+        <div className="mt-10 text-xs text-white/40">
           Last updated: {new Date().getFullYear()}
-        </p>
+        </div>
 
       </div>
-    </div>
+    </main>
   );
-};
-
-export default PrivacyPolicy;
+}
