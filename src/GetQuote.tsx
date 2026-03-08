@@ -74,16 +74,13 @@ setStatus("sending");
 try{
 
 const payload = {
-
-name,
-phone,
-email,
-zip_code:zip,
-service_requested:service,
-project_details:details,
-heard_about_us:heard,
-source:"Website Quote Form"
-
+  name,
+  phone,
+  email,
+  "contact.service_requested": service,
+  "contact.project_details": details,
+  "contact.how_did_you_hear_about_us": heard,
+  "contact.zip_code": zip
 };
 
 const res = await fetch(WEBHOOK,{
