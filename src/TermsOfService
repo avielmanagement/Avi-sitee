@@ -1,35 +1,38 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Section: React.FC<{ title: string; children: React.ReactNode }> = ({
-  title,
-  children,
-}) => (
-  <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
-    <h2 className="text-xl md:text-2xl font-semibold text-white">{title}</h2>
-    <div className="mt-3 text-sm md:text-base text-white/70 leading-relaxed space-y-3">
-      {children}
-    </div>
-  </section>
-);
+interface SectionProps {
+  title: string;
+  children: React.ReactNode;
+}
 
-export default function TermsOfService() {
+const Section: React.FC<SectionProps> = ({ title, children }) => {
+  return (
+    <section className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+      <h2 className="text-xl md:text-2xl font-semibold text-white">
+        {title}
+      </h2>
+
+      <div className="mt-3 text-sm md:text-base text-white/70 leading-relaxed space-y-3">
+        {children}
+      </div>
+    </section>
+  );
+};
+
+const TermsOfService: React.FC = () => {
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="max-w-4xl mx-auto px-6 pt-28 pb-16">
 
         <header className="mb-10">
-          <div className="text-[11px] uppercase tracking-[0.35em] text-white/50">
-            Legal
-          </div>
-
-          <h1 className="mt-3 text-4xl md:text-5xl font-bold">
+          <h1 className="text-4xl md:text-5xl font-bold">
             Terms of Service
           </h1>
 
-          <p className="mt-3 text-white/70">
-            These Terms of Service govern the use of
-            services provided by Aviel Management Inc.
+          <p className="mt-4 text-white/70">
+            These Terms of Service govern the use of services provided
+            by <strong>Aviel Management Inc.</strong>
           </p>
 
           <Link
@@ -42,9 +45,9 @@ export default function TermsOfService() {
 
         <div className="space-y-6">
 
-          <Section title="Service Description">
+          <Section title="Services">
             <p>
-              Aviel Management Inc. provides construction,
+              Aviel Management Inc provides construction,
               EV charger installation, junk removal,
               demolition, roofing, and related services.
             </p>
@@ -53,48 +56,51 @@ export default function TermsOfService() {
           <Section title="SMS Messaging Terms">
             <p>
               By submitting your phone number on our website,
-              you agree to receive SMS messages from
+              you consent to receive SMS messages from
               <strong> Aviel Management Inc.</strong>
             </p>
 
             <p>
               These messages may include appointment confirmations,
-              service notifications, estimate updates,
-              and project communications.
+              estimate updates, scheduling notifications,
+              and service communications.
             </p>
 
             <p>
-              Message frequency varies.
+              Message frequency varies depending on your request.
               Message and data rates may apply.
-              Reply <strong>STOP</strong> to unsubscribe.
-              Reply <strong>HELP</strong> for assistance.
+            </p>
+
+            <p>
+              Reply <strong>STOP</strong> to unsubscribe or
+              <strong> HELP</strong> for assistance.
             </p>
           </Section>
 
           <Section title="User Responsibilities">
             <p>
-              You agree to provide accurate information
-              when requesting services or submitting forms.
+              You agree to provide accurate information when submitting
+              service requests or contacting our business.
             </p>
           </Section>
 
           <Section title="Carrier Liability">
             <p>
-              Mobile carriers are not responsible for
-              delayed or undelivered SMS messages.
+              Mobile carriers are not liable for delayed or
+              undelivered SMS messages.
             </p>
           </Section>
 
           <Section title="Age Requirement">
             <p>
-              You must be at least 18 years old
-              to request services through our website.
+              You must be at least 18 years old to use our services
+              or consent to SMS communications.
             </p>
           </Section>
 
           <Section title="Contact Information">
             <p className="font-medium text-white">
-              Aviel Management Inc.
+              Aviel Management Inc
             </p>
 
             <p>
@@ -120,11 +126,13 @@ export default function TermsOfService() {
 
         </div>
 
-        <div className="mt-10 text-xs text-white/40">
+        <p className="mt-10 text-xs text-white/40">
           Last updated: {new Date().getFullYear()}
-        </div>
+        </p>
 
       </div>
     </main>
   );
-}
+};
+
+export default TermsOfService;
