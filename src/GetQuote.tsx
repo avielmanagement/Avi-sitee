@@ -1,212 +1,293 @@
 import React, { useState } from "react";
+import {
+Clock3,
+ShieldCheck,
+BadgeCheck,
+Hammer,
+Zap,
+Trash2,
+Shield
+} from "lucide-react";
 
-const GHL_WEBHOOK = "PASTE_YOUR_WEBHOOK_URL";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
 
-export default function QuoteForm() {
+const GHL_WEBHOOK =
+"https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246";
 
-const [form, setForm] = useState({
-name: "",
-phone: "",
-email: "",
-zip: "",
-service: "",
-details: "",
-heard: ""
-});
+type Status = "idle" | "sending" | "success" | "error";
 
-const [status, setStatus] = useState("");
-const [errors, setErrors] = useState<any>({});
+export default function GetQuote() {
 
-const validate = () => {
+const [status,setStatus] = useState<Status>("idle");
 
-let newErrors:any = {};
+const [name,setName] = useState("");
+const [phone,setPhone] = useState("");
+const [email,setEmail] = useState("");
+const [zip,setZip] = useState("");
 
-if (!form.name) newErrors.name = "Full name required";
+const [service,setService] = useState("");
+const [details,setDetails] = useState("");
+const [heard,setHeard] = useState("");
 
-if (!form.phone) newErrors.phone = "Phone required";
+const [consent,setConsent] = useState(false);
 
-if (!form.email.includes("@") || !form.email.includes(".com"))
-newErrors.email = "Enter valid email";
+/* VALIDATION */
 
-if (!/^\d{5}$/.test(form.zip))
-newErrors.zip = "ZIP must be 5 numbers";
+const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
+const validEmail = email.includes("@") && email.includes(".com");
+const validZip = /^\d{5}$/.test(zip);
 
-if (!form.service) newErrors.service = "Select a service";
+const formValid =
+name &&
+validPhone &&
+validEmail &&
+validZip &&
+service &&
+details &&
+heard &&
+consent;
 
-if (!form.details) newErrors.details = "Project details required";
+const formatPhone = (value:string) => {
 
-setErrors(newErrors);
+const numbers = value.replace(/\D/g,"").slice(0,10);
 
-return Object.keys(newErrors).length === 0;
+if(numbers.length <= 3) return numbers;
+
+if(numbers.length <= 6)
+return `(${numbers.slice(0,3)}) ${numbers.slice(3)}`;
+
+return `(${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`;
 
 };
 
-const handleChange = (e:any) => {
-
-setForm({
-...form,
-[e.target.name]: e.target.value
-});
-
-};
-
-const handleSubmit = async (e:any) => {
+const handleSubmit = async(e:React.FormEvent) => {
 
 e.preventDefault();
 
-if (!validate()) return;
+if(!formValid){
+setStatus("error");
+return;
+}
 
 setStatus("sending");
 
-try {
+try{
 
 const payload = {
-name: form.name,
-phone: form.phone,
-email: form.email,
-"contact.zip_code": form.zip,
-"contact.service_requested": form.service,
-"contact.project_details": form.details,
-"contact.how_did_you_hear_about_us": form.heard,
-source: "Website Quote"
+
+name,
+phone,
+email,
+
+"contact.zip_code": zip,
+"contact.service_requested": service,
+"contact.project_details": details,
+"contact.how_did_you_hear_about_us": heard,
+
+source:"Website Quote Form"
+
 };
 
-const res = await fetch(GHL_WEBHOOK, {
-method: "POST",
-headers: {
-"Content-Type": "application/x-www-form-urlencoded"
+const res = await fetch(GHL_WEBHOOK,{
+method:"POST",
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
 },
-body: new URLSearchParams(payload).toString()
+body:new URLSearchParams(payload as any).toString()
 });
 
-if (!res.ok) throw new Error("Webhook error");
+if(!res.ok) throw new Error();
 
 setStatus("success");
 
-setForm({
-name:"",
-phone:"",
-email:"",
-zip:"",
-service:"",
-details:"",
-heard:""
-});
+setName("");
+setPhone("");
+setEmail("");
+setZip("");
+setService("");
+setDetails("");
+setHeard("");
+setConsent(false);
 
-} catch {
+}catch{
+
 setStatus("error");
+
 }
 
 };
 
-return (
+return(
 
-<div style={{
-background:"#0b0b0b",
-padding:"30px",
-borderRadius:"14px",
-boxShadow:"0 0 30px rgba(255,193,7,0.08)",
-border:"1px solid rgba(255,255,255,0.05)"
-}}>
+<div className="bg-black min-h-screen">
 
-<h2 style={{
-color:"#fff",
-marginBottom:"5px",
-fontSize:"22px"
-}}>
+<Navbar/>
+
+<section className="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-16">
+
+<div>
+
+<p className="tracking-[5px] text-gray-400 text-sm mb-6">
+AVIEL MANAGEMENT INC
+</p>
+
+<h1 className="text-6xl font-bold leading-tight">
+
+<span className="text-white">FREE</span>
+
+<br/>
+
+<span className="text-yellow-400">
+ESTIMATES
+</span>
+
+</h1>
+
+<p className="text-gray-400 mt-6 max-w-lg">
+Tell us about your project and receive a fast estimate,
+timeline and next steps from experienced NYC contractors.
+</p>
+
+<div className="flex gap-3 mt-8 flex-wrap">
+
+<div className="badge">
+<Clock3 size={16}/> Same day replies
+</div>
+
+<div className="badge">
+<ShieldCheck size={16}/> Licensed & insured
+</div>
+
+<div className="badge">
+<BadgeCheck size={16}/> Quality craftsmanship
+</div>
+
+</div>
+
+<div className="grid grid-cols-2 gap-4 mt-10">
+
+<div className="serviceCard">
+<Hammer size={18}/> General Construction
+</div>
+
+<div className="serviceCard">
+<Zap size={18}/> EV Charger Installation
+</div>
+
+<div className="serviceCard">
+<Trash2 size={18}/> Junk Removal & Demo
+</div>
+
+<div className="serviceCard">
+<Shield size={18}/> Roofing
+</div>
+
+</div>
+
+</div>
+
+<div className="formCard">
+
+<h2 className="text-white text-xl font-semibold mb-2">
 Request Callback
 </h2>
 
-<p style={{color:"#aaa",marginBottom:"20px"}}>
+<p className="text-gray-400 text-sm mb-6">
 Fill this out and we'll contact you shortly.
 </p>
 
-<form onSubmit={handleSubmit}>
+<form onSubmit={handleSubmit} className="space-y-4">
 
-<div className="row">
+<div className="grid grid-cols-2 gap-3">
 
 <input
-name="name"
 placeholder="Full Name"
-value={form.name}
-onChange={handleChange}
+value={name}
+onChange={(e)=>setName(e.target.value)}
+className="input"
 />
-
-{errors.name && <span className="error">{errors.name}</span>}
 
 <input
-name="phone"
 placeholder="Phone"
-value={form.phone}
-onChange={handleChange}
+value={phone}
+onChange={(e)=>setPhone(formatPhone(e.target.value))}
+className="input"
 />
-
-{errors.phone && <span className="error">{errors.phone}</span>}
 
 </div>
 
-<div className="row">
+<div className="grid grid-cols-2 gap-3">
 
 <input
-name="email"
 placeholder="Email"
-value={form.email}
-onChange={handleChange}
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+className="input"
 />
-
-{errors.email && <span className="error">{errors.email}</span>}
 
 <input
-name="zip"
 placeholder="ZIP Code"
-value={form.zip}
-onChange={handleChange}
+value={zip}
+maxLength={5}
+onChange={(e)=>setZip(e.target.value)}
+className="input"
 />
-
-{errors.zip && <span className="error">{errors.zip}</span>}
 
 </div>
 
 <select
-name="service"
-value={form.service}
-onChange={handleChange}
+value={service}
+onChange={(e)=>setService(e.target.value)}
+className="input"
 >
-<option value="">Service Requested</option>
-<option value="General Construction">General Construction</option>
-<option value="EV Charger Installation">EV Charger Installation</option>
-<option value="Junk Removal & Demo">Junk Removal & Demo</option>
-<option value="Roofing">Roofing</option>
-</select>
 
-{errors.service && <span className="error">{errors.service}</span>}
+<option value="">Service Requested</option>
+
+<option>General Construction</option>
+<option>EV Charger Installation</option>
+<option>Junk Removal & Demo</option>
+<option>Roofing</option>
+
+</select>
 
 <textarea
-name="details"
 placeholder="Project details"
-value={form.details}
-onChange={handleChange}
+value={details}
+onChange={(e)=>setDetails(e.target.value)}
+className="input h-28"
 />
 
-{errors.details && <span className="error">{errors.details}</span>}
-
 <select
-name="heard"
-value={form.heard}
-onChange={handleChange}
+value={heard}
+onChange={(e)=>setHeard(e.target.value)}
+className="input"
 >
+
 <option value="">How Did You Hear About Us?</option>
-<option value="Google">Google</option>
-<option value="Referral">Referral</option>
-<option value="Instagram">Instagram</option>
-<option value="Facebook">Facebook</option>
-<option value="Other">Other</option>
+
+<option>Google</option>
+<option>Referral</option>
+<option>Instagram</option>
+<option>Facebook</option>
+
 </select>
 
+<label className="flex items-center gap-2 text-xs text-gray-400">
+
+<input
+type="checkbox"
+checked={consent}
+onChange={(e)=>setConsent(e.target.checked)}
+/>
+
+I agree to receive text messages regarding my request.
+
+</label>
+
 <button
-type="submit"
-className="submit"
-disabled={status === "sending"}
+disabled={!formValid || status === "sending"}
+className="submitButton"
 >
 
 {status === "sending"
@@ -216,85 +297,95 @@ disabled={status === "sending"}
 </button>
 
 {status === "success" &&
-<p className="success">
-Your request was sent. We'll contact you shortly.
+<p className="text-green-400 text-sm">
+Your request was sent successfully.
 </p>}
 
 {status === "error" &&
-<p className="error">
-Something went wrong. Please try again.
+<p className="text-red-400 text-sm">
+Please fill all required fields correctly.
 </p>}
 
 </form>
 
-<style>{`
+</div>
 
-.row{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-margin-bottom:10px;
-}
+</section>
 
-input,select,textarea{
+<Footer/>
+
+<style jsx>{`
+
+.input{
 width:100%;
 padding:12px;
-background:#111;
-border:1px solid #2a2a2a;
+background:#0d0d0d;
+border:1px solid #1f1f1f;
 border-radius:8px;
 color:white;
-outline:none;
 transition:all .25s ease;
 }
 
-input:focus,
-select:focus,
-textarea:focus{
-border-color:#ffc107;
-box-shadow:0 0 10px rgba(255,193,7,.3);
+.input:focus{
+border-color:#facc15;
+box-shadow:0 0 10px rgba(250,204,21,.4);
+outline:none;
 }
 
-textarea{
-height:90px;
-resize:none;
-margin-top:10px;
-}
-
-.submit{
-margin-top:15px;
+.submitButton{
 width:100%;
 padding:14px;
 background:#4b5563;
-border:none;
 border-radius:8px;
-color:white;
 font-weight:600;
-cursor:pointer;
-transition:all .3s ease;
+transition:.25s;
 }
 
-.submit:hover{
-background:#ffc107;
+.submitButton:hover{
+background:#facc15;
 color:black;
-box-shadow:0 0 20px rgba(255,193,7,.5);
+box-shadow:0 0 20px rgba(250,204,21,.6);
 }
 
-.error{
-color:#ff4d4d;
-font-size:12px;
-display:block;
-margin-bottom:6px;
+.formCard{
+background:#050505;
+padding:30px;
+border-radius:14px;
+border:1px solid #1a1a1a;
+box-shadow:0 0 40px rgba(255,215,0,.05);
 }
 
-.success{
-color:#00e676;
-margin-top:10px;
-font-size:14px;
+.badge{
+display:flex;
+gap:6px;
+align-items:center;
+background:#0e0e0e;
+padding:8px 12px;
+border-radius:8px;
+border:1px solid #1f1f1f;
+font-size:13px;
+}
+
+.serviceCard{
+display:flex;
+align-items:center;
+gap:8px;
+border:1px solid #1f1f1f;
+padding:12px;
+border-radius:10px;
+background:#0b0b0b;
+transition:.2s;
+}
+
+.serviceCard:hover{
+border-color:#facc15;
+box-shadow:0 0 12px rgba(250,204,21,.3);
 }
 
 `}</style>
 
 </div>
+
 );
 
 }
