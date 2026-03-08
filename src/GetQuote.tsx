@@ -108,14 +108,20 @@ const handleSubmit = async (e: React.FormEvent) => {
   try {
     const payload = {
       name: fullName,
-      phone: phone,
-      email: email,
-      projectType: projectType,
-      budget: budget,
-      timeline: timeline,
-      details: details,
+      phone,
+      email,
+      projectType,
+      budget,
+      timeline,
+      details,
       source: "Website - Get Quote Page",
     };
+
+    if (!GHL_WEBHOOK) {
+      console.warn("Webhook URL missing");
+      setStatus("error");
+      return;
+    }
 
     const res = await fetch(GHL_WEBHOOK, {
       method: "POST",
