@@ -19,54 +19,49 @@ const WEBHOOK =
 
 type Status = "idle" | "sending" | "success" | "error";
 
-const formatPhone = (value:string)=>{
-const numbers=value.replace(/\D/g,"").slice(0,10);
+const formatPhone = (value: string) => {
+const numbers = value.replace(/\D/g, "").slice(0, 10);
 
-if(numbers.length<=3) return numbers;
-if(numbers.length<=6)
-return `(${numbers.slice(0,3)}) ${numbers.slice(3)}`;
+if (numbers.length <= 3) return numbers;
+if (numbers.length <= 6)
+return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
 
-return `(${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`;
+return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`;
 };
 
-export default function GetQuote(){
+export default function GetQuote() {
 
-const [status,setStatus]=useState<Status>("idle");
+const [status,setStatus] = useState<Status>("idle");
 
-const [name,setName]=useState("");
-const [phone,setPhone]=useState("");
-const [email,setEmail]=useState("");
-const [address,setAddress]=useState("");
-const [zip,setZip]=useState("");
+const [name,setName] = useState("");
+const [phone,setPhone] = useState("");
+const [email,setEmail] = useState("");
+const [zip,setZip] = useState("");
 
-const [service,setService]=useState("");
-const [budget,setBudget]=useState("");
-const [timeline,setTimeline]=useState("");
-const [details,setDetails]=useState("");
-const [heard,setHeard]=useState("");
+const [service,setService] = useState("");
+const [details,setDetails] = useState("");
+const [heard,setHeard] = useState("");
 
-const [consent,setConsent]=useState(false);
+const [consent,setConsent] = useState(false);
 
 /* validation */
 
-const validPhone=/^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
-const validEmail=/^[^\s@]+@[^\s@]+\.(com|net|org)$/i.test(email);
-const validZip=/^\d{5}$/.test(zip);
+const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
+const validEmail = /^[^\s@]+@[^\s@]+\.(com|net|org)$/i.test(email);
+const validZip = /^\d{5}$/.test(zip);
 
-const formValid=
+const formValid =
 name &&
 validPhone &&
 validEmail &&
-address &&
 validZip &&
 service &&
-budget &&
-timeline &&
 details &&
 heard &&
 consent;
 
-const handleSubmit=async(e:React.FormEvent)=>{
+const handleSubmit = async (e: React.FormEvent) => {
+
 e.preventDefault();
 
 if(!formValid){
@@ -78,21 +73,20 @@ setStatus("sending");
 
 try{
 
-const payload={
+const payload = {
+
 name,
 phone,
 email,
-project_address:address,
 zip_code:zip,
 service_requested:service,
-estimated_budget:budget,
-project_timeline:timeline,
 project_details:details,
 heard_about_us:heard,
-source:"Website Quote"
+source:"Website Quote Form"
+
 };
 
-const res=await fetch(WEBHOOK,{
+const res = await fetch(WEBHOOK,{
 method:"POST",
 headers:{
 "Content-Type":"application/x-www-form-urlencoded"
@@ -107,11 +101,8 @@ setStatus("success");
 setName("");
 setPhone("");
 setEmail("");
-setAddress("");
 setZip("");
 setService("");
-setBudget("");
-setTimeline("");
 setDetails("");
 setHeard("");
 setConsent(false);
@@ -124,15 +115,19 @@ setStatus("error");
 
 return(
 
-<div className="min-h-screen bg-black text-white">
+<div className="min-h-screen bg-black text-white relative overflow-hidden">
+
+{/* gold glow background */}
+
+<div className="absolute -top-40 -left-40 w-[700px] h-[700px] bg-yellow-500/20 blur-[160px] rounded-full animate-pulse"/>
 
 <Navbar/>
 
 <section className="max-w-7xl mx-auto px-6 py-20">
 
-<div className="grid lg:grid-cols-2 gap-16">
+<div className="grid lg:grid-cols-2 gap-16 items-start">
 
-{/* LEFT SIDE */}
+{/* LEFT */}
 
 <div>
 
@@ -157,7 +152,9 @@ Tell us about your project and receive a fast estimate,
 timeline and next steps from experienced NYC contractors.
 </p>
 
-<div className="flex gap-3 mt-8 flex-wrap">
+{/* badges */}
+
+<div className="flex flex-wrap gap-3 mt-8">
 
 <div className="flex items-center gap-2 border border-white/10 px-4 py-2 rounded-lg">
 <Clock3 size={16}/> Same day replies
@@ -173,41 +170,51 @@ timeline and next steps from experienced NYC contractors.
 
 </div>
 
+{/* service cards */}
+
 <div className="grid grid-cols-2 gap-4 mt-10">
 
-<button onClick={()=>setService("General Construction")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 ${
+<button
+onClick={()=>setService("General Construction")}
+className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
 service==="General Construction"
-?"border-yellow-400"
+?"border-yellow-400 bg-yellow-400/10"
 :"border-white/10"
-}`}>
+}`}
+>
 <Hammer size={18}/> General Construction
 </button>
 
-<button onClick={()=>setService("EV Charger Installation")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 ${
+<button
+onClick={()=>setService("EV Charger Installation")}
+className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
 service==="EV Charger Installation"
-?"border-yellow-400"
+?"border-yellow-400 bg-yellow-400/10"
 :"border-white/10"
-}`}>
+}`}
+>
 <Zap size={18}/> EV Charger Installation
 </button>
 
-<button onClick={()=>setService("Junk Removal")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 ${
+<button
+onClick={()=>setService("Junk Removal")}
+className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
 service==="Junk Removal"
-?"border-yellow-400"
+?"border-yellow-400 bg-yellow-400/10"
 :"border-white/10"
-}`}>
+}`}
+>
 <Trash2 size={18}/> Junk Removal
 </button>
 
-<button onClick={()=>setService("Roofing")}
-className={`flex items-center gap-2 border rounded-xl px-4 py-3 ${
+<button
+onClick={()=>setService("Roofing")}
+className={`flex items-center gap-2 border rounded-xl px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-yellow-400 ${
 service==="Roofing"
-?"border-yellow-400"
+?"border-yellow-400 bg-yellow-400/10"
 :"border-white/10"
-}`}>
+}`}
+>
 <Shield size={18}/> Roofing
 </button>
 
@@ -217,7 +224,7 @@ service==="Roofing"
 
 {/* FORM */}
 
-<div className="bg-black/70 border border-white/10 rounded-3xl p-8">
+<div className="bg-black/70 border border-white/10 rounded-3xl p-8 shadow-xl">
 
 <h2 className="text-2xl font-semibold">
 Request Callback
@@ -236,9 +243,7 @@ placeholder="Full Name"
 value={name}
 onChange={e=>setName(e.target.value)}
 className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!name && status==="error"
-?"border-red-500"
-:"border-white/10"
+!name && status==="error" ? "border-red-500":"border-white/10"
 }`}
 />
 
@@ -247,9 +252,7 @@ placeholder="(917) 555-1234"
 value={phone}
 onChange={e=>setPhone(formatPhone(e.target.value))}
 className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!validPhone && status==="error"
-?"border-red-500"
-:"border-white/10"
+!validPhone && status==="error" ? "border-red-500":"border-white/10"
 }`}
 />
 
@@ -262,37 +265,20 @@ placeholder="Email"
 value={email}
 onChange={e=>setEmail(e.target.value)}
 className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!validEmail && status==="error"
-?"border-red-500"
-:"border-white/10"
+!validEmail && status==="error" ? "border-red-500":"border-white/10"
 }`}
 />
-
-<input
-placeholder="Project Address"
-value={address}
-onChange={e=>setAddress(e.target.value)}
-className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!address && status==="error"
-?"border-red-500"
-:"border-white/10"
-}`}
-/>
-
-</div>
-
-<div className="grid grid-cols-2 gap-3">
 
 <input
 placeholder="ZIP Code"
 value={zip}
 onChange={e=>setZip(e.target.value.replace(/\D/g,"").slice(0,5))}
 className={`bg-black border px-3 py-2 rounded-lg w-full ${
-!validZip && status==="error"
-?"border-red-500"
-:"border-white/10"
+!validZip && status==="error" ? "border-red-500":"border-white/10"
 }`}
 />
+
+</div>
 
 <select
 value={service}
@@ -306,16 +292,12 @@ className="bg-black border border-white/10 px-3 py-2 rounded-lg w-full"
 <option>EV Charger Installation</option>
 </select>
 
-</div>
-
 <textarea
 placeholder="Project details"
 value={details}
 onChange={e=>setDetails(e.target.value)}
 className={`bg-black border px-3 py-2 rounded-lg w-full h-28 ${
-!details && status==="error"
-?"border-red-500"
-:"border-white/10"
+!details && status==="error" ? "border-red-500":"border-white/10"
 }`}
 />
 
@@ -346,15 +328,13 @@ I agree to receive text messages regarding my request.
 
 <button
 disabled={!formValid || status==="sending"}
-className={`w-full py-3 rounded-lg font-semibold ${
+className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${
 !formValid
 ?"bg-gray-600 cursor-not-allowed"
-:"bg-yellow-400 hover:bg-yellow-500 text-black"
+:"bg-yellow-400 text-black hover:bg-yellow-500 hover:shadow-[0_0_20px_rgba(255,200,0,0.6)]"
 }`}
 >
-{status==="sending"
-?"Submitting..."
-:"Get My Free Estimate"}
+{status==="sending"?"Submitting...":"Get My Free Estimate"}
 </button>
 
 {status==="success" && (
