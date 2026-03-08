@@ -116,10 +116,12 @@ const GetQuote: React.FC = () => {
 
       if (GHL_WEBHOOK) {
         const res = await fetch(GHL_WEBHOOK, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded",
+  },
+  body: new URLSearchParams(payload).toString(),
+});
         if (!res.ok) throw new Error("Webhook failed");
       } else {
         // still allow UI testing
