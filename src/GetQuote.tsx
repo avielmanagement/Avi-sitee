@@ -8,7 +8,12 @@ import {
   PhoneCall,
   Mail,
   ArrowUpRight,
+  CheckCircle2,
+  Hammer,
+  Zap,
+  Trash2
 } from "lucide-react";
+
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { PageRoute } from "./types";
@@ -19,8 +24,6 @@ const PHONE_TEL = "+19172755796";
 
 const GHL_WEBHOOK =
   "https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246";
-
-const HERO_BG_IMAGE_URL = "";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -35,6 +38,7 @@ const formatPhone = (value: string) => {
 };
 
 const GetQuote: React.FC = () => {
+
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
@@ -45,6 +49,7 @@ const GetQuote: React.FC = () => {
   const [timeline, setTimeline] = useState("");
   const [details, setDetails] = useState("");
   const [consent, setConsent] = useState(false);
+
   const [status, setStatus] = useState<Status>("idle");
 
   const isValidPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
@@ -54,9 +59,9 @@ const GetQuote: React.FC = () => {
       { value: "", label: "Select…" },
       { value: "General Construction", label: "General Construction" },
       { value: "Roofing", label: "Roofing" },
-      { value: "Junk / Demo", label: "Junk Removal / Demo" },
-      { value: "EZ EV Installation", label: "EZ EV Installation" },
-      { value: "Other", label: "Other" },
+      { value: "Junk Removal", label: "Junk Removal / Demo" },
+      { value: "EV Charger", label: "EV Charger Installation" },
+      { value: "Other", label: "Other" }
     ],
     []
   );
@@ -67,7 +72,7 @@ const GetQuote: React.FC = () => {
       { value: "$1k–$5k", label: "$1k – $5k" },
       { value: "$5k–$15k", label: "$5k – $15k" },
       { value: "$15k–$50k", label: "$15k – $50k" },
-      { value: "$50k+", label: "$50k+" },
+      { value: "$50k+", label: "$50k+" }
     ],
     []
   );
@@ -79,7 +84,7 @@ const GetQuote: React.FC = () => {
       { value: "1–2 weeks", label: "1–2 weeks" },
       { value: "2–4 weeks", label: "2–4 weeks" },
       { value: "1–3 months", label: "1–3 months" },
-      { value: "Flexible", label: "Flexible" },
+      { value: "Flexible", label: "Flexible" }
     ],
     []
   );
@@ -130,23 +135,22 @@ const GetQuote: React.FC = () => {
         budget,
         timeline,
         details,
-        source: "Website - Get Quote Page",
+        source: "Website - Get Quote Page"
       };
 
       const res = await fetch(GHL_WEBHOOK, {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/x-www-form-urlencoded"
         },
-        body: new URLSearchParams(payload as Record<string, string>).toString(),
+        body: new URLSearchParams(payload as Record<string, string>).toString()
       });
 
       if (!res.ok) throw new Error("Webhook failed");
 
       setStatus("success");
       reset();
-    } catch (err) {
-      console.error(err);
+    } catch {
       setStatus("error");
     }
   };
@@ -159,11 +163,11 @@ const GetQuote: React.FC = () => {
 
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black/70 to-black" />
 
-        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20">
+        <div className="relative max-w-7xl mx-auto px-6 py-20">
 
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
+          <div className="grid lg:grid-cols-2 gap-14 items-start">
 
-            {/* LEFT */}
+            {/* LEFT SIDE */}
             <div>
 
               <div className="text-[12px] tracking-[0.35em] text-white/60 uppercase">
@@ -181,8 +185,10 @@ const GetQuote: React.FC = () => {
 
               <p className="mt-5 text-white/70 max-w-xl">
                 Tell us about your project and receive a fast estimate,
-                timeline, and next steps.
+                timeline, and next steps from experienced NYC contractors.
               </p>
+
+              {/* Trust badges */}
 
               <div className="mt-7 flex flex-wrap gap-3">
 
@@ -203,17 +209,46 @@ const GetQuote: React.FC = () => {
 
               </div>
 
+              {/* SERVICES CARDS */}
+
+              <div className="mt-10 grid sm:grid-cols-2 gap-4">
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex gap-3">
+                  <Hammer className="text-brand-gold"/>
+                  General Construction
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex gap-3">
+                  <Zap className="text-brand-gold"/>
+                  EV Charger Install
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex gap-3">
+                  <Trash2 className="text-brand-gold"/>
+                  Junk Removal
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 flex gap-3">
+                  <ShieldCheck className="text-brand-gold"/>
+                  Roofing
+                </div>
+
+              </div>
+
             </div>
 
             {/* FORM */}
+
             <div className="relative">
 
-              <div className="relative rounded-3xl border border-white/12 bg-black/55 backdrop-blur-xl shadow-2xl overflow-hidden">
+              <div className="rounded-3xl border border-white/12 bg-black/55 backdrop-blur-xl shadow-2xl overflow-hidden">
 
                 <div className="p-6 md:p-8 border-b border-white/10">
-                  <h2 className="text-2xl font-semibold">Request Callback</h2>
-                  <p className="text-sm text-white/60 mt-1">
-                    Fill this out and we'll contact you about your quote.
+                  <h2 className="text-2xl font-semibold">
+                    Request Callback
+                  </h2>
+                  <p className="text-sm text-white/60">
+                    Fill this out and we’ll contact you shortly.
                   </p>
                 </div>
 
@@ -236,7 +271,9 @@ const GetQuote: React.FC = () => {
                   />
 
                   {!isValidPhone && phone.length > 0 && (
-                    <p className="text-red-400 text-xs">Invalid phone number</p>
+                    <p className="text-red-400 text-xs">
+                      Invalid phone number
+                    </p>
                   )}
 
                   <input
@@ -335,18 +372,25 @@ const GetQuote: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!canSubmit || status === "sending"}
-                    className="w-full rounded-xl bg-gradient-to-r from-brand-gold to-yellow-400 text-black font-bold py-3 hover:scale-[1.02] transition-all shadow-lg shadow-yellow-500/20"
+                    className="w-full rounded-xl bg-gradient-to-r from-brand-gold to-yellow-400 text-black font-bold py-3 hover:scale-[1.02] transition"
                   >
                     {status === "sending"
                       ? "Submitting..."
                       : "Get My Free Estimate"}
                   </button>
 
-                  <div className="flex justify-center gap-6 text-[11px] text-white/50 mt-3">
-                    <span>✔ Fast response</span>
-                    <span>✔ Licensed</span>
-                    <span>✔ Free estimate</span>
-                  </div>
+                  {status === "success" && (
+                    <div className="flex items-center gap-2 text-emerald-400 text-sm justify-center mt-2">
+                      <CheckCircle2 size={18}/>
+                      Request submitted successfully!
+                    </div>
+                  )}
+
+                  {status === "error" && (
+                    <div className="text-red-400 text-sm text-center mt-2">
+                      Something went wrong. Please call {PHONE_DISPLAY}.
+                    </div>
+                  )}
 
                 </form>
 
