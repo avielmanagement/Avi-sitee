@@ -12,7 +12,7 @@ import GetQuote from "./GetQuote";
 import StickyCursor from "./StickyCursor";
 
 import PrivacyPolicy from "./PrivacyPolicy";
-import Terms from "./Terms";
+import TermsOfService from "./TermsOfService";
 
 import { PageRoute } from "./types";
 
