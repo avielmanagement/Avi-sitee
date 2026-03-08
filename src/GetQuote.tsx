@@ -1,20 +1,20 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
+Clock3,
 ShieldCheck,
 BadgeCheck,
-Clock3,
-CheckCircle,
-AlertCircle,
 Hammer,
 Zap,
 Trash2,
-Shield
+Shield,
+CheckCircle,
+AlertCircle
 } from "lucide-react";
 
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-const GHL_WEBHOOK =
+const WEBHOOK =
 "https://services.leadconnectorhq.com/hooks/JJ7TEbO5Muclhwck3Cqh/webhook-trigger/7748c1f6-e64b-4598-9c2c-3f7ef8fce246";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -33,34 +33,34 @@ export default function GetQuote() {
 
 const [status,setStatus] = useState<Status>("idle");
 
-const [fullName,setFullName] = useState("");
+const [name,setName] = useState("");
 const [phone,setPhone] = useState("");
 const [email,setEmail] = useState("");
 const [address,setAddress] = useState("");
 const [zip,setZip] = useState("");
 
-const [projectType,setProjectType] = useState("");
+const [service,setService] = useState("");
 const [budget,setBudget] = useState("");
 const [timeline,setTimeline] = useState("");
-const [propertyType,setPropertyType] = useState("");
+const [property,setProperty] = useState("");
 const [details,setDetails] = useState("");
 const [heard,setHeard] = useState("");
 
 const [consent,setConsent] = useState(false);
 
-const isValidPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
+const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
 
 const canSubmit =
-fullName &&
+name &&
 email &&
-isValidPhone &&
-projectType &&
+validPhone &&
+service &&
 budget &&
 timeline &&
 details &&
 consent;
 
-const handleSubmit = async (e:React.FormEvent) => {
+const handleSubmit = async (e:React.FormEvent)=>{
 
 e.preventDefault();
 
@@ -72,24 +72,24 @@ try{
 
 const payload = {
 
-name: fullName,
-phone: phone,
-email: email,
+name,
+phone,
+email,
 
-service_requested: projectType,
-project_address: address,
-zip: zip,
-estimated_budget: budget,
-project_timeline: timeline,
-property_type: propertyType,
-project_details: details,
-heard_about_us: heard,
+service_requested:service,
+project_address:address,
+zip,
+estimated_budget:budget,
+project_timeline:timeline,
+property_type:property,
+project_details:details,
+heard_about_us:heard,
 
-source: "Website Quote Form"
+source:"Website Quote Form"
 
 };
 
-const res = await fetch(GHL_WEBHOOK,{
+const res = await fetch(WEBHOOK,{
 method:"POST",
 headers:{
 "Content-Type":"application/x-www-form-urlencoded"
@@ -98,47 +98,28 @@ body:new URLSearchParams(payload as Record<string,string>).toString()
 });
 
 if(res.ok){
-
 setStatus("success");
-
-setFullName("");
-setPhone("");
-setEmail("");
-setAddress("");
-setZip("");
-setProjectType("");
-setBudget("");
-setTimeline("");
-setPropertyType("");
-setDetails("");
-setHeard("");
-setConsent(false);
-
 }else{
-
 setStatus("error");
-
 }
 
 }catch{
-
 setStatus("error");
-
 }
 
 };
 
-return (
+return(
 
 <div className="min-h-screen bg-black text-white relative overflow-hidden">
 
-{/* animated glow */}
+{/* glow background */}
 
-<div className="absolute w-[600px] h-[600px] bg-yellow-500/20 blur-[160px] rounded-full top-20 left-[-200px] animate-pulse"/>
+<div className="absolute w-[600px] h-[600px] bg-yellow-500/20 blur-[160px] rounded-full -left-40 top-20"/>
 
 <Navbar/>
 
-<section className="relative max-w-7xl mx-auto px-6 py-20">
+<section className="max-w-7xl mx-auto px-6 py-20">
 
 <div className="grid lg:grid-cols-2 gap-16 items-start">
 
@@ -146,11 +127,11 @@ return (
 
 <div>
 
-<div className="text-[12px] tracking-[0.4em] text-white/50 uppercase">
-Aviel Management Inc.
+<div className="text-xs tracking-[0.4em] text-white/50 uppercase">
+AVIEL MANAGEMENT INC.
 </div>
 
-<h1 className="mt-3 leading-[0.95] font-extrabold">
+<h1 className="mt-4 font-extrabold leading-[0.95]">
 
 <span className="block text-6xl md:text-7xl">
 FREE
@@ -164,26 +145,26 @@ ESTIMATES
 
 <p className="mt-5 text-white/70 max-w-xl">
 
-Tell us about your project and receive a fast estimate, timeline,
-and next steps from experienced NYC contractors.
+Tell us about your project and receive a fast estimate,
+timeline and next steps from experienced NYC contractors.
 
 </p>
 
-{/* trust badges */}
+{/* badges */}
 
-<div className="mt-8 flex flex-wrap gap-3">
+<div className="flex flex-wrap gap-3 mt-8">
 
-<span className="badge">
-<Clock3 size={16}/> Same-day replies
-</span>
+<div className="flex items-center gap-2 border border-white/10 bg-white/5 px-4 py-2 rounded-full text-sm">
+<Clock3 size={16}/> Same day replies
+</div>
 
-<span className="badge">
+<div className="flex items-center gap-2 border border-white/10 bg-white/5 px-4 py-2 rounded-full text-sm">
 <ShieldCheck size={16}/> Licensed & insured
-</span>
+</div>
 
-<span className="badge">
+<div className="flex items-center gap-2 border border-white/10 bg-white/5 px-4 py-2 rounded-full text-sm">
 <BadgeCheck size={16}/> Quality craftsmanship
-</span>
+</div>
 
 </div>
 
@@ -191,20 +172,20 @@ and next steps from experienced NYC contractors.
 
 <div className="grid grid-cols-2 gap-4 mt-10">
 
-<div className="service">
-<Hammer/> General Construction
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<Hammer size={18}/> General Construction
 </div>
 
-<div className="service">
-<Zap/> EV Charger Install
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<Zap size={18}/> EV Charger Install
 </div>
 
-<div className="service">
-<Trash2/> Junk Removal
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<Trash2 size={18}/> Junk Removal
 </div>
 
-<div className="service">
-<Shield/> Roofing
+<div className="border border-white/10 bg-white/5 rounded-xl p-4 flex items-center gap-3">
+<Shield size={18}/> Roofing
 </div>
 
 </div>
@@ -213,29 +194,37 @@ and next steps from experienced NYC contractors.
 
 {/* FORM */}
 
-<div className="form-card">
+<div className="border border-white/10 rounded-3xl bg-black/60 backdrop-blur-xl p-8">
+
+<h2 className="text-2xl font-semibold">
+Request Callback
+</h2>
+
+<p className="text-sm text-white/60 mb-6">
+Fill this out and we'll contact you shortly.
+</p>
 
 <form onSubmit={handleSubmit} className="space-y-4">
 
 <input
 placeholder="Full Name"
-value={fullName}
-onChange={(e)=>setFullName(e.target.value)}
-className="input"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 />
 
 <input
 placeholder="(917) 555-1234"
 value={phone}
 onChange={(e)=>setPhone(formatPhone(e.target.value))}
-className="input"
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 />
 
 <input
 placeholder="Email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
-className="input"
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 />
 
 <div className="grid grid-cols-2 gap-3">
@@ -244,22 +233,22 @@ className="input"
 placeholder="Project Address"
 value={address}
 onChange={(e)=>setAddress(e.target.value)}
-className="input"
+className="bg-black border border-white/10 rounded-lg px-3 py-2"
 />
 
 <input
 placeholder="ZIP"
 value={zip}
 onChange={(e)=>setZip(e.target.value)}
-className="input"
+className="bg-black border border-white/10 rounded-lg px-3 py-2"
 />
 
 </div>
 
 <select
-value={projectType}
-onChange={(e)=>setProjectType(e.target.value)}
-className="input"
+value={service}
+onChange={(e)=>setService(e.target.value)}
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 >
 
 <option value="">Service Requested</option>
@@ -275,7 +264,7 @@ className="input"
 <select
 value={budget}
 onChange={(e)=>setBudget(e.target.value)}
-className="input"
+className="bg-black border border-white/10 rounded-lg px-3 py-2"
 >
 
 <option value="">Estimated Budget</option>
@@ -289,7 +278,7 @@ className="input"
 <select
 value={timeline}
 onChange={(e)=>setTimeline(e.target.value)}
-className="input"
+className="bg-black border border-white/10 rounded-lg px-3 py-2"
 >
 
 <option value="">Project Timeline</option>
@@ -303,9 +292,9 @@ className="input"
 </div>
 
 <select
-value={propertyType}
-onChange={(e)=>setPropertyType(e.target.value)}
-className="input"
+value={property}
+onChange={(e)=>setProperty(e.target.value)}
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 >
 
 <option value="">Property Type</option>
@@ -319,13 +308,13 @@ className="input"
 placeholder="Project details"
 value={details}
 onChange={(e)=>setDetails(e.target.value)}
-className="input h-[110px]"
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2 h-28"
 />
 
 <select
 value={heard}
 onChange={(e)=>setHeard(e.target.value)}
-className="input"
+className="w-full bg-black border border-white/10 rounded-lg px-3 py-2"
 >
 
 <option value="">How did you hear about us?</option>
@@ -337,7 +326,7 @@ className="input"
 
 </select>
 
-<label className="flex gap-2 text-xs text-white/70">
+<label className="flex items-center gap-2 text-xs text-white/70">
 
 <input
 type="checkbox"
@@ -351,12 +340,10 @@ I agree to receive text messages regarding my request.
 
 <button
 disabled={!canSubmit || status==="sending"}
-className="submit-btn"
+className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-3 rounded-lg transition"
 >
 
-{status==="sending"
-? "Submitting..."
-: "Get My Free Estimate"}
+{status==="sending" ? "Submitting..." : "Get My Free Estimate"}
 
 </button>
 
@@ -364,7 +351,7 @@ className="submit-btn"
 
 {status==="success" && (
 
-<div className="success">
+<div className="flex items-center gap-2 text-emerald-400 text-sm justify-center mt-2">
 
 <CheckCircle size={18}/>
 Request submitted successfully!
@@ -377,7 +364,7 @@ Request submitted successfully!
 
 {status==="error" && (
 
-<div className="error">
+<div className="flex items-center gap-2 text-red-400 text-sm justify-center mt-2">
 
 <AlertCircle size={18}/>
 Something went wrong. Please try again.
@@ -399,4 +386,5 @@ Something went wrong. Please try again.
 </div>
 
 );
+
 }
