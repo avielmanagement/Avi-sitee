@@ -93,8 +93,13 @@ const GetQuote: React.FC = () => {
     setDetails("");
     setConsent(false);
   };
+  if (!GHL_WEBHOOK) {
+  console.warn("Webhook URL missing");
+  setStatus("error");
+  return;
+}
 
- const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   if (!canSubmit) return;
 
@@ -117,7 +122,7 @@ const GetQuote: React.FC = () => {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams(payload).toString(),
+      body: new URLSearchParams(payload as Record<string, string>).toString(),
     });
 
     if (!res.ok) throw new Error("Webhook failed");
