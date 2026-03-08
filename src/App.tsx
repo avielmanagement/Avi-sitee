@@ -37,7 +37,7 @@ const App: React.FC = () => {
 
         {/* Legal pages */}
         <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/TermsOfService" element={<TermsOfervice />} />
+        <Route path="/TermsOfService" element={<TermsOfService />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to={PageRoute.HOME} replace />} />
