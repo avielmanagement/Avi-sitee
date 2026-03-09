@@ -88,7 +88,15 @@ export default function PrivacyPolicy() {
               We do not sell or rent your personal information.
             </p>
 
-            <Section title="Cookies and Tracking Technologies">
+            <p>
+              <strong>
+                Mobile information will not be shared with third parties
+                or affiliates for marketing or promotional purposes.
+              </strong>
+            </p>
+          </Section>
+
+             <Section title="Cookies and Tracking Technologies">
   <p>
     Our website may use cookies, analytics tools, and similar technologies to
     improve user experience, analyze website traffic, and enhance website
@@ -107,14 +115,6 @@ export default function PrivacyPolicy() {
     of the website may not function properly if cookies are disabled.
   </p>
 </Section>
-
-            <p>
-              <strong>
-                Mobile information will not be shared with third parties
-                or affiliates for marketing or promotional purposes.
-              </strong>
-            </p>
-          </Section>
 
           <Section title="Security">
             <p>
