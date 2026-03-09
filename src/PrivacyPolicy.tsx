@@ -88,6 +88,26 @@ export default function PrivacyPolicy() {
               We do not sell or rent your personal information.
             </p>
 
+            <Section title="Cookies and Tracking Technologies">
+  <p>
+    Our website may use cookies, analytics tools, and similar technologies to
+    improve user experience, analyze website traffic, and enhance website
+    functionality.
+  </p>
+
+  <p>
+    Cookies are small files stored on your device that help us understand how
+    visitors interact with our website. These tools may collect anonymous
+    information such as browser type, device type, pages visited, and time
+    spent on the website.
+  </p>
+
+  <p>
+    You may disable cookies through your browser settings, though some features
+    of the website may not function properly if cookies are disabled.
+  </p>
+</Section>
+
             <p>
               <strong>
                 Mobile information will not be shared with third parties
