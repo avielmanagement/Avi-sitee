@@ -32,21 +32,15 @@ const [heard,setHeard] = useState("");
 
 const [consent,setConsent] = useState(false);
 
+const [errors,setErrors] = useState<any>({});
+
 /* VALIDATION */
 
 const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
-const validEmail = email.includes("@") && email.includes(".com");
+const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const validZip = /^\d{5}$/.test(zip);
 
-const formValid =
-name &&
-validPhone &&
-validEmail &&
-validZip &&
-service &&
-details &&
-heard &&
-consent;
+/* PHONE FORMAT */
 
 const formatPhone = (value:string) => {
 
@@ -65,7 +59,25 @@ const handleSubmit = async(e:React.FormEvent) => {
 
 e.preventDefault();
 
-if(!formValid){
+let newErrors:any = {};
+
+if(!name) newErrors.name = "Enter your full name";
+
+if(!validPhone) newErrors.phone = "Enter a valid phone number";
+
+if(!validEmail) newErrors.email = "Enter a valid email address";
+
+if(!validZip) newErrors.zip = "ZIP code must be 5 digits";
+
+if(!service) newErrors.service = "Select a service";
+
+if(!details) newErrors.details = "Please describe your project";
+
+if(!heard) newErrors.heard = "Please tell us how you heard about us";
+
+setErrors(newErrors);
+
+if(Object.keys(newErrors).length > 0){
 setStatus("error");
 return;
 }
@@ -109,6 +121,7 @@ setService("");
 setDetails("");
 setHeard("");
 setConsent(false);
+setErrors({});
 
 }catch{
 
@@ -201,31 +214,41 @@ Fill this out and we'll contact you shortly.
 
 <div className="grid grid-cols-2 gap-3">
 
+<div>
 <input
 placeholder="Full Name"
 value={name}
 onChange={(e)=>setName(e.target.value)}
 className="input"
 />
+{errors.name && <p className="error">{errors.name}</p>}
+</div>
 
+<div>
 <input
 placeholder="Phone"
 value={phone}
 onChange={(e)=>setPhone(formatPhone(e.target.value))}
 className="input"
 />
+{errors.phone && <p className="error">{errors.phone}</p>}
+</div>
 
 </div>
 
 <div className="grid grid-cols-2 gap-3">
 
+<div>
 <input
 placeholder="Email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
 className="input"
 />
+{errors.email && <p className="error">{errors.email}</p>}
+</div>
 
+<div>
 <input
 placeholder="ZIP Code"
 value={zip}
@@ -233,71 +256,73 @@ maxLength={5}
 onChange={(e)=>setZip(e.target.value)}
 className="input"
 />
+{errors.zip && <p className="error">{errors.zip}</p>}
+</div>
 
 </div>
 
+<div>
 <select
 value={service}
 onChange={(e)=>setService(e.target.value)}
 className="input"
 >
-
 <option value="">Service Requested</option>
-
 <option>General Construction</option>
 <option>EV Charger Installation</option>
 <option>Junk Removal & Demo</option>
 <option>Roofing</option>
-
 </select>
+{errors.service && <p className="error">{errors.service}</p>}
+</div>
 
+<div>
 <textarea
 placeholder="Project details"
 value={details}
 onChange={(e)=>setDetails(e.target.value)}
 className="input h-28"
 />
+{errors.details && <p className="error">{errors.details}</p>}
+</div>
 
+<div>
 <select
 value={heard}
 onChange={(e)=>setHeard(e.target.value)}
 className="input"
 >
-
 <option value="">How Did You Hear About Us?</option>
-
 <option>Google</option>
 <option>Referral</option>
 <option>Instagram</option>
 <option>Facebook</option>
-
 </select>
+{errors.heard && <p className="error">{errors.heard}</p>}
+</div>
 
 <label className="flex items-start gap-2 text-xs text-gray-400 leading-relaxed">
 
 <input
 type="checkbox"
-required
 checked={consent}
 onChange={(e)=>setConsent(e.target.checked)}
 className="mt-1"
 />
 
 <span>
-By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, appointment scheduling, and project updates. These messages are <strong>transactional and informational</strong>. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for assistance. View our <a href="/privacy-policy" className="underline text-yellow-400">Privacy Policy</a> and <a href="/terms-of-service" className="underline text-yellow-400">Terms of Service</a>.
+By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, appointment scheduling, and project updates. These messages are <strong>transactional and informational</strong>. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for assistance.
 </span>
 
 </label>
 
 <button
-disabled={!formValid || status === "sending"}
+disabled={status === "sending"}
 className="submitButton"
 >
-
 {status === "sending"
 ? "Sending..."
 : "Get My FREE Estimate"}
-
 </button>
 
 {status === "success" &&
@@ -307,7 +332,7 @@ Your request was sent successfully.
 
 {status === "error" &&
 <p className="text-red-400 text-sm">
-Please fill all required fields correctly.
+Please fix the highlighted fields.
 </p>}
 
 </form>
@@ -384,6 +409,12 @@ transition:.2s;
 .serviceCard:hover{
 border-color:#facc15;
 box-shadow:0 0 12px rgba(250,204,21,.3);
+}
+
+.error{
+color:#f87171;
+font-size:12px;
+margin-top:4px;
 }
 
 `}</style>
