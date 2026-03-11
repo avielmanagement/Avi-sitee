@@ -277,16 +277,14 @@ className="input"
 
 <input
 type="checkbox"
+required
 checked={consent}
 onChange={(e)=>setConsent(e.target.checked)}
 className="mt-1"
 />
 
 <span>
-By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, scheduling updates, and service notifications.  
-Message frequency varies depending on your request.  
-Message and data rates may apply.  
-Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for assistance.
+By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, appointment scheduling, and project updates. These messages are <strong>transactional and informational</strong>. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for assistance. View our <a href="/privacy-policy" className="underline text-yellow-400">Privacy Policy</a> and <a href="/terms-of-service" className="underline text-yellow-400">Terms of Service</a>.
 </span>
 
 </label>
