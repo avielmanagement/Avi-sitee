@@ -111,6 +111,12 @@ body:new URLSearchParams(payload as any).toString()
 
 if(!res.ok) throw new Error();
 
+if (typeof window !== "undefined" && (window as any).gtag) {
+  (window as any).gtag('event','conversion',{
+    send_to:'AW-17974479001/RmVccVy4XvCeTmn8_pC'
+  });
+}
+
 setStatus("success");
 
 setName("");
