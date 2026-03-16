@@ -133,9 +133,7 @@ send_to:"AW-17974479001/RmVccVy4XvCeTmn8_pC"
 setSubmitted(true)
 setStatus("success")
 
-setTimeout(()=>{
 window.location.href="/thank-you"
-},1200)
 
 }catch{
 
