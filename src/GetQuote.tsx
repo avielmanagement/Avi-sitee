@@ -413,7 +413,7 @@ transform:translateY(-3px);
 box-shadow:0 10px 25px rgba(250,204,21,.15);
 }
 
-`}</style>
+</style>
 
 </div>
 
