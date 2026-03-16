@@ -93,53 +93,39 @@ return
 
 setStatus("sending")
 
-try{
+try {
 
-const payload = {
+  const payload = {
+    name,
+    phone,
+    email,
+    zip_code: zip,
+    service_requested: service,
+    project_details: details,
+    how_did_you_hear_about_us: heard,
+    source: "Website Quote Form",
+    ...utm
+  };
 
-name,
-phone,
-email,
+  const res = await fetch(GHL_WEBHOOK, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(payload)
+  });
 
-zip_code:zip,
-service_requested:service,
-project_details:details,
-how_did_you_hear_about_us:heard,
+  if (!res.ok) throw new Error("Webhook failed");
 
-source:"Website Quote Form",
+  setSubmitted(true);
+  setStatus("success");
 
-...utm
+  window.location.href = "/thank-you";
 
-}
+} catch (err) {
 
-const res = await fetch(GHL_WEBHOOK,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(payload)
-})
-
-if(!res.ok) throw new Error()
-
-if(typeof window!=="undefined" && (window as any).gtag){
-
-(window as any).gtag("event","conversion",{
-send_to:"AW-17974479001/RmVccVy4XvCeTmn8_pC"
-})
-
-}
-
-setSubmitted(true)
-setStatus("success")
-
-window.location.href="/thank-you"
-
-}catch{
-
-setStatus("error")
-
-}
+  console.error(err);
+  setStatus("error");
 
 }
 
