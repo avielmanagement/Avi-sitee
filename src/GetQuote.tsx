@@ -61,7 +61,7 @@ e.preventDefault();
 
 let newErrors:any = {};
 
-if(!name) newErrors.name = "Enter your full name";
+if(!name.trim()) newErrors.name = "Enter your full name";
 
 if(!validPhone) newErrors.phone = "Enter a valid phone number";
 
@@ -71,9 +71,11 @@ if(!validZip) newErrors.zip = "ZIP code must be 5 digits";
 
 if(!service) newErrors.service = "Select a service";
 
-if(!details) newErrors.details = "Please describe your project";
+if(!details.trim()) newErrors.details = "Please describe your project";
 
 if(!heard) newErrors.heard = "Please tell us how you heard about us";
+
+if(!consent) newErrors.consent = "Consent required to receive messages";
 
 setErrors(newErrors);
 
@@ -88,14 +90,14 @@ try{
 
 const payload = {
 
-name,
+name: name.trim(),
 phone,
-email,
+email: email.trim(),
 
-"contact.zip_code": zip,
-"contact.service_requested": service,
-"contact.project_details": details,
-"contact.how_did_you_hear_about_us": heard,
+zip_code: zip,
+service_requested: service,
+project_details: details.trim(),
+how_did_you_hear_about_us: heard,
 
 source:"Website Quote Form"
 
@@ -104,17 +106,23 @@ source:"Website Quote Form"
 const res = await fetch(GHL_WEBHOOK,{
 method:"POST",
 headers:{
-"Content-Type":"application/x-www-form-urlencoded"
+"Content-Type":"application/json"
 },
-body:new URLSearchParams(payload as any).toString()
+body: JSON.stringify(payload)
 });
 
-if(!res.ok) throw new Error();
+if(!res.ok){
+throw new Error("Webhook failed");
+}
+
+/* Google Ads Conversion */
 
 if (typeof window !== "undefined" && (window as any).gtag) {
-  (window as any).gtag('event','conversion',{
-    send_to:'AW-17974479001/RmVccVy4XvCeTmn8_pC'
-  });
+
+(window as any).gtag("event","conversion",{
+send_to:"AW-17974479001/RmVccVy4XvCeTmn8_pC"
+});
+
 }
 
 setStatus("success");
@@ -129,7 +137,9 @@ setHeard("");
 setConsent(false);
 setErrors({});
 
-}catch{
+}catch(error){
+
+console.error("Form submission error:", error);
 
 setStatus("error");
 
@@ -317,10 +327,12 @@ className="mt-1"
 />
 
 <span>
-By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, appointment scheduling, and project updates. These messages are <strong>transactional and informational</strong>. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe or <strong>HELP</strong> for assistance.
+By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, appointment scheduling, and project updates. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe.
 </span>
 
 </label>
+
+{errors.consent && <p className="error">{errors.consent}</p>}
 
 <button
 disabled={status === "sending"}
@@ -348,82 +360,6 @@ Please fix the highlighted fields.
 </section>
 
 <Footer/>
-
-<style jsx>{`
-
-.input{
-width:100%;
-padding:12px;
-background:#0d0d0d;
-border:1px solid #1f1f1f;
-border-radius:8px;
-color:white;
-transition:all .25s ease;
-}
-
-.input:focus{
-border-color:#facc15;
-box-shadow:0 0 10px rgba(250,204,21,.4);
-outline:none;
-}
-
-.submitButton{
-width:100%;
-padding:14px;
-background:#4b5563;
-border-radius:8px;
-font-weight:600;
-transition:.25s;
-}
-
-.submitButton:hover{
-background:#facc15;
-color:black;
-box-shadow:0 0 20px rgba(250,204,21,.6);
-}
-
-.formCard{
-background:#050505;
-padding:30px;
-border-radius:14px;
-border:1px solid #1a1a1a;
-box-shadow:0 0 40px rgba(255,215,0,.05);
-}
-
-.badge{
-display:flex;
-gap:6px;
-align-items:center;
-background:#0e0e0e;
-padding:8px 12px;
-border-radius:8px;
-border:1px solid #1f1f1f;
-font-size:13px;
-}
-
-.serviceCard{
-display:flex;
-align-items:center;
-gap:8px;
-border:1px solid #1f1f1f;
-padding:12px;
-border-radius:10px;
-background:#0b0b0b;
-transition:.2s;
-}
-
-.serviceCard:hover{
-border-color:#facc15;
-box-shadow:0 0 12px rgba(250,204,21,.3);
-}
-
-.error{
-color:#f87171;
-font-size:12px;
-margin-top:4px;
-}
-
-`}</style>
 
 </div>
 
