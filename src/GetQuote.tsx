@@ -17,109 +17,99 @@ const GHL_WEBHOOK =
 
 type Status = "idle" | "sending" | "success" | "error";
 
-export default function GetQuote(){
+export default function GetQuote() {
 
-const [status,setStatus] = useState<Status>("idle")
+const [status,setStatus] = useState<Status>("idle");
 
-const [name,setName] = useState("")
-const [phone,setPhone] = useState("")
-const [email,setEmail] = useState("")
-const [zip,setZip] = useState("")
+const [name,setName] = useState("");
+const [phone,setPhone] = useState("");
+const [email,setEmail] = useState("");
+const [zip,setZip] = useState("");
 
-const [service,setService] = useState("")
-const [details,setDetails] = useState("")
-const [heard,setHeard] = useState("")
+const [service,setService] = useState("");
+const [details,setDetails] = useState("");
+const [heard,setHeard] = useState("");
 
-const [consent,setConsent] = useState(false)
+const [consent,setConsent] = useState(false);
+const [errors,setErrors] = useState<any>({});
 
-const [errors,setErrors] = useState<any>({})
-
-const [utm,setUtm] = useState<any>({})
-
-const [honeypot,setHoneypot] = useState("")
-
-/* Capture UTM params from ads */
+const [utm,setUtm] = useState<any>({});
+const [spam,setSpam] = useState("");
 
 useEffect(()=>{
 
-const params = new URLSearchParams(window.location.search)
+const params = new URLSearchParams(window.location.search);
 
 setUtm({
 utm_source:params.get("utm_source") || "",
 utm_campaign:params.get("utm_campaign") || "",
 utm_medium:params.get("utm_medium") || "",
-utm_term:params.get("utm_term") || "",
-utm_content:params.get("utm_content") || ""
-})
+utm_term:params.get("utm_term") || ""
+});
 
-},[])
+},[]);
 
-/* Validation */
+const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
+const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validZip = /^\d{5}$/.test(zip);
 
-const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone)
-const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-const validZip = /^\d{5}$/.test(zip)
+const formatPhone = (value:string) => {
 
-/* Phone formatter */
+const numbers = value.replace(/\D/g,"").slice(0,10);
 
-const formatPhone = (value:string)=>{
+if(numbers.length <= 3) return numbers;
 
-const numbers = value.replace(/\D/g,"").slice(0,10)
+if(numbers.length <= 6)
+return `(${numbers.slice(0,3)}) ${numbers.slice(3)}`;
 
-if(numbers.length<=3) return numbers
-if(numbers.length<=6)
-return `(${numbers.slice(0,3)}) ${numbers.slice(3)}`
+return `(${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`;
 
-return `(${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`
+};
 
+const handleSubmit = async(e:React.FormEvent) => {
+
+e.preventDefault();
+
+if(spam) return;
+
+let newErrors:any = {};
+
+if(!name) newErrors.name="Enter name";
+if(!validPhone) newErrors.phone="Invalid phone";
+if(!validEmail) newErrors.email="Invalid email";
+if(!validZip) newErrors.zip="ZIP must be 5 digits";
+if(!service) newErrors.service="Select service";
+if(!details) newErrors.details="Describe project";
+if(!heard) newErrors.heard="Select option";
+if(!consent) newErrors.consent="Consent required";
+
+setErrors(newErrors);
+
+if(Object.keys(newErrors).length > 0){
+setStatus("error");
+return;
 }
 
-/* Submit */
-
-const handleSubmit = async(e:React.FormEvent)=>{
-
-e.preventDefault()
-
-if(honeypot) return
-
-let newErrors:any = {}
-
-if(!name) newErrors.name="Enter your full name"
-if(!validPhone) newErrors.phone="Enter a valid phone number"
-if(!validEmail) newErrors.email="Enter a valid email"
-if(!validZip) newErrors.zip="ZIP must be 5 digits"
-if(!service) newErrors.service="Select a service"
-if(!details) newErrors.details="Describe your project"
-if(!heard) newErrors.heard="Tell us how you heard about us"
-if(!consent) newErrors.consent="Consent required"
-
-setErrors(newErrors)
-
-if(Object.keys(newErrors).length>0){
-setStatus("error")
-return
-}
-
-setStatus("sending")
+setStatus("sending");
 
 try{
 
 const payload = {
 
-name:name.trim(),
+name,
 phone,
-email:email.trim(),
+email,
 
 zip_code:zip,
 service_requested:service,
-project_details:details.trim(),
+project_details:details,
 how_did_you_hear_about_us:heard,
 
 source:"Website Quote Form",
 
 ...utm
 
-}
+};
 
 const res = await fetch(GHL_WEBHOOK,{
 method:"POST",
@@ -127,48 +117,36 @@ headers:{
 "Content-Type":"application/json"
 },
 body:JSON.stringify(payload)
-})
+});
 
-if(!res.ok) throw new Error()
-
-/* Google Ads Conversion */
+if(!res.ok) throw new Error();
 
 if(typeof window!=="undefined" && (window as any).gtag){
 
 (window as any).gtag("event","conversion",{
 send_to:"AW-17974479001/RmVccVy4XvCeTmn8_pC"
-})
+});
 
 }
 
-/* Additional lead event */
+setStatus("success");
 
-if(typeof window!=="undefined" && (window as any).gtag){
-
-(window as any).gtag("event","generate_lead")
-
-}
-
-setStatus("success")
-
-setName("")
-setPhone("")
-setEmail("")
-setZip("")
-setService("")
-setDetails("")
-setHeard("")
-setConsent(false)
+setName("");
+setPhone("");
+setEmail("");
+setZip("");
+setService("");
+setDetails("");
+setHeard("");
+setConsent(false);
 
 }catch{
 
-setStatus("error")
+setStatus("error");
 
 }
 
-}
-
-/* UI */
+};
 
 return(
 
@@ -176,28 +154,24 @@ return(
 
 <Navbar/>
 
-<section className="max-w-7xl mx-auto px-6 py-24 grid lg:grid-cols-2 gap-16">
+<section className="hero">
 
-<div>
+<div className="heroText">
 
-<p className="tracking-[5px] text-gray-400 text-sm mb-6">
-AVIEL MANAGEMENT INC
-</p>
+<p className="tag">AVIEL MANAGEMENT INC</p>
 
-<h1 className="text-6xl font-bold leading-tight">
-
-<span className="text-white">FREE</span>
+<h1>
+<span className="white">FREE</span>
 <br/>
-<span className="text-yellow-400">ESTIMATES</span>
-
+<span className="yellow">ESTIMATES</span>
 </h1>
 
-<p className="text-gray-400 mt-6 max-w-lg">
+<p className="desc">
 Tell us about your project and receive a fast estimate,
 timeline and next steps from experienced NYC contractors.
 </p>
 
-<div className="flex gap-3 mt-8 flex-wrap">
+<div className="badges">
 
 <div className="badge">
 <Clock3 size={16}/> Same day replies
@@ -213,22 +187,22 @@ timeline and next steps from experienced NYC contractors.
 
 </div>
 
-<div className="grid grid-cols-2 gap-4 mt-10">
+<div className="services">
 
-<div className="serviceCard">
-<Hammer size={18}/> General Construction
+<div className="service">
+<Hammer/> General Construction
 </div>
 
-<div className="serviceCard">
-<Zap size={18}/> EV Charger Installation
+<div className="service">
+<Zap/> EV Charger Installation
 </div>
 
-<div className="serviceCard">
-<Trash2 size={18}/> Junk Removal & Demo
+<div className="service">
+<Trash2/> Junk Removal & Demo
 </div>
 
-<div className="serviceCard">
-<Shield size={18}/> Roofing
+<div className="service">
+<Shield/> Roofing
 </div>
 
 </div>
@@ -237,26 +211,17 @@ timeline and next steps from experienced NYC contractors.
 
 <div className="formCard">
 
-<h2 className="text-white text-xl font-semibold mb-2">
-Request Callback
-</h2>
+<h2>Request Callback</h2>
 
-<p className="text-gray-400 text-sm mb-6">
-Fill this out and we'll contact you shortly.
-</p>
-
-<form onSubmit={handleSubmit} className="space-y-4">
-
-{/* honeypot spam trap */}
+<form onSubmit={handleSubmit}>
 
 <input
-type="text"
-value={honeypot}
-onChange={(e)=>setHoneypot(e.target.value)}
+value={spam}
+onChange={(e)=>setSpam(e.target.value)}
 className="hidden"
 />
 
-<div className="grid grid-cols-2 gap-3">
+<div className="grid">
 
 <input
 placeholder="Full Name"
@@ -274,7 +239,7 @@ className="input"
 
 </div>
 
-<div className="grid grid-cols-2 gap-3">
+<div className="grid">
 
 <input
 placeholder="Email"
@@ -298,18 +263,20 @@ value={service}
 onChange={(e)=>setService(e.target.value)}
 className="input"
 >
+
 <option value="">Service Requested</option>
 <option>General Construction</option>
 <option>EV Charger Installation</option>
 <option>Junk Removal & Demo</option>
 <option>Roofing</option>
+
 </select>
 
 <textarea
-placeholder="Project details"
+placeholder="Project Details"
 value={details}
 onChange={(e)=>setDetails(e.target.value)}
-className="input h-28"
+className="input textarea"
 />
 
 <select
@@ -317,45 +284,32 @@ value={heard}
 onChange={(e)=>setHeard(e.target.value)}
 className="input"
 >
-<option value="">How Did You Hear About Us?</option>
+
+<option value="">How did you hear about us?</option>
 <option>Google</option>
 <option>Referral</option>
 <option>Instagram</option>
 <option>Facebook</option>
+
 </select>
 
-<label className="flex items-start gap-2 text-xs text-gray-400">
+<label className="consent">
 
 <input
 type="checkbox"
 checked={consent}
 onChange={(e)=>setConsent(e.target.checked)}
-className="mt-1"
 />
 
 <span>
-By checking this box you agree to receive SMS messages from
-<strong> Aviel Management Inc</strong>.
+I agree to receive SMS regarding my estimate.
 </span>
 
 </label>
 
-<button
-disabled={status==="sending"}
-className="submitButton"
->
+<button className="cta">
 {status==="sending" ? "Sending..." : "Get My FREE Estimate"}
 </button>
-
-{status==="success" &&
-<p className="text-green-400 text-sm">
-Your request was sent successfully.
-</p>}
-
-{status==="error" &&
-<p className="text-red-400 text-sm">
-Please fix the highlighted fields.
-</p>}
 
 </form>
 
@@ -365,8 +319,148 @@ Please fix the highlighted fields.
 
 <Footer/>
 
+<style jsx>{`
+
+.hero{
+max-width:1200px;
+margin:auto;
+padding:120px 30px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:80px;
+}
+
+.tag{
+letter-spacing:4px;
+color:#888;
+font-size:12px;
+}
+
+h1{
+font-size:64px;
+line-height:1.1;
+}
+
+.white{color:white}
+.yellow{color:#facc15}
+
+.desc{
+color:#9ca3af;
+margin-top:20px;
+max-width:500px;
+}
+
+.badges{
+display:flex;
+gap:10px;
+margin-top:30px;
+flex-wrap:wrap;
+}
+
+.badge{
+background:#0e0e0e;
+border:1px solid #222;
+padding:8px 12px;
+border-radius:8px;
+font-size:13px;
+display:flex;
+gap:6px;
+align-items:center;
+}
+
+.services{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-top:40px;
+}
+
+.service{
+background:#0b0b0b;
+border:1px solid #222;
+padding:14px;
+border-radius:10px;
+display:flex;
+gap:8px;
+align-items:center;
+transition:.2s;
+}
+
+.service:hover{
+border-color:#facc15;
+transform:translateY(-3px);
+box-shadow:0 10px 25px rgba(250,204,21,.15);
+}
+
+.formCard{
+background:#060606;
+padding:40px;
+border-radius:16px;
+border:1px solid #1a1a1a;
+box-shadow:0 0 40px rgba(255,215,0,.06);
+}
+
+.formCard h2{
+color:white;
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.input{
+width:100%;
+padding:14px;
+background:#0d0d0d;
+border:1px solid #1f1f1f;
+border-radius:10px;
+color:white;
+margin-bottom:12px;
+transition:.2s;
+}
+
+.input:focus{
+border-color:#facc15;
+box-shadow:0 0 15px rgba(250,204,21,.35);
+outline:none;
+}
+
+.textarea{
+height:120px;
+}
+
+.cta{
+width:100%;
+padding:16px;
+background:#facc15;
+border:none;
+border-radius:10px;
+font-weight:700;
+color:black;
+margin-top:10px;
+transition:.2s;
+}
+
+.cta:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 30px rgba(250,204,21,.35);
+}
+
+.consent{
+font-size:12px;
+color:#999;
+display:flex;
+gap:6px;
+margin:10px 0;
+}
+
+`}</style>
+
 </div>
 
-)
+);
 
 }
