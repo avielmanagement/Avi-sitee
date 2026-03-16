@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 Clock3,
 ShieldCheck,
@@ -17,135 +17,158 @@ const GHL_WEBHOOK =
 
 type Status = "idle" | "sending" | "success" | "error";
 
-export default function GetQuote() {
+export default function GetQuote(){
 
-const [status,setStatus] = useState<Status>("idle");
+const [status,setStatus] = useState<Status>("idle")
 
-const [name,setName] = useState("");
-const [phone,setPhone] = useState("");
-const [email,setEmail] = useState("");
-const [zip,setZip] = useState("");
+const [name,setName] = useState("")
+const [phone,setPhone] = useState("")
+const [email,setEmail] = useState("")
+const [zip,setZip] = useState("")
 
-const [service,setService] = useState("");
-const [details,setDetails] = useState("");
-const [heard,setHeard] = useState("");
+const [service,setService] = useState("")
+const [details,setDetails] = useState("")
+const [heard,setHeard] = useState("")
 
-const [consent,setConsent] = useState(false);
+const [consent,setConsent] = useState(false)
 
-const [errors,setErrors] = useState<any>({});
+const [errors,setErrors] = useState<any>({})
 
-/* VALIDATION */
+const [utm,setUtm] = useState<any>({})
 
-const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone);
-const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validZip = /^\d{5}$/.test(zip);
+const [honeypot,setHoneypot] = useState("")
 
-/* PHONE FORMAT */
+/* Capture UTM params from ads */
 
-const formatPhone = (value:string) => {
+useEffect(()=>{
 
-const numbers = value.replace(/\D/g,"").slice(0,10);
+const params = new URLSearchParams(window.location.search)
 
-if(numbers.length <= 3) return numbers;
+setUtm({
+utm_source:params.get("utm_source") || "",
+utm_campaign:params.get("utm_campaign") || "",
+utm_medium:params.get("utm_medium") || "",
+utm_term:params.get("utm_term") || "",
+utm_content:params.get("utm_content") || ""
+})
 
-if(numbers.length <= 6)
-return `(${numbers.slice(0,3)}) ${numbers.slice(3)}`;
+},[])
 
-return `(${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`;
+/* Validation */
 
-};
+const validPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone)
+const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+const validZip = /^\d{5}$/.test(zip)
 
-const handleSubmit = async(e:React.FormEvent) => {
+/* Phone formatter */
 
-e.preventDefault();
+const formatPhone = (value:string)=>{
 
-let newErrors:any = {};
+const numbers = value.replace(/\D/g,"").slice(0,10)
 
-if(!name.trim()) newErrors.name = "Enter your full name";
+if(numbers.length<=3) return numbers
+if(numbers.length<=6)
+return `(${numbers.slice(0,3)}) ${numbers.slice(3)}`
 
-if(!validPhone) newErrors.phone = "Enter a valid phone number";
+return `(${numbers.slice(0,3)}) ${numbers.slice(3,6)}-${numbers.slice(6)}`
 
-if(!validEmail) newErrors.email = "Enter a valid email address";
-
-if(!validZip) newErrors.zip = "ZIP code must be 5 digits";
-
-if(!service) newErrors.service = "Select a service";
-
-if(!details.trim()) newErrors.details = "Please describe your project";
-
-if(!heard) newErrors.heard = "Please tell us how you heard about us";
-
-if(!consent) newErrors.consent = "Consent required to receive messages";
-
-setErrors(newErrors);
-
-if(Object.keys(newErrors).length > 0){
-setStatus("error");
-return;
 }
 
-setStatus("sending");
+/* Submit */
+
+const handleSubmit = async(e:React.FormEvent)=>{
+
+e.preventDefault()
+
+if(honeypot) return
+
+let newErrors:any = {}
+
+if(!name) newErrors.name="Enter your full name"
+if(!validPhone) newErrors.phone="Enter a valid phone number"
+if(!validEmail) newErrors.email="Enter a valid email"
+if(!validZip) newErrors.zip="ZIP must be 5 digits"
+if(!service) newErrors.service="Select a service"
+if(!details) newErrors.details="Describe your project"
+if(!heard) newErrors.heard="Tell us how you heard about us"
+if(!consent) newErrors.consent="Consent required"
+
+setErrors(newErrors)
+
+if(Object.keys(newErrors).length>0){
+setStatus("error")
+return
+}
+
+setStatus("sending")
 
 try{
 
 const payload = {
 
-name: name.trim(),
+name:name.trim(),
 phone,
-email: email.trim(),
+email:email.trim(),
 
-zip_code: zip,
-service_requested: service,
-project_details: details.trim(),
-how_did_you_hear_about_us: heard,
+zip_code:zip,
+service_requested:service,
+project_details:details.trim(),
+how_did_you_hear_about_us:heard,
 
-source:"Website Quote Form"
+source:"Website Quote Form",
 
-};
+...utm
+
+}
 
 const res = await fetch(GHL_WEBHOOK,{
 method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body: JSON.stringify(payload)
-});
+body:JSON.stringify(payload)
+})
 
-if(!res.ok){
-throw new Error("Webhook failed");
-}
+if(!res.ok) throw new Error()
 
 /* Google Ads Conversion */
 
-if (typeof window !== "undefined" && (window as any).gtag) {
+if(typeof window!=="undefined" && (window as any).gtag){
 
 (window as any).gtag("event","conversion",{
 send_to:"AW-17974479001/RmVccVy4XvCeTmn8_pC"
-});
+})
 
 }
 
-setStatus("success");
+/* Additional lead event */
 
-setName("");
-setPhone("");
-setEmail("");
-setZip("");
-setService("");
-setDetails("");
-setHeard("");
-setConsent(false);
-setErrors({});
+if(typeof window!=="undefined" && (window as any).gtag){
 
-}catch(error){
-
-console.error("Form submission error:", error);
-
-setStatus("error");
+(window as any).gtag("event","generate_lead")
 
 }
 
-};
+setStatus("success")
+
+setName("")
+setPhone("")
+setEmail("")
+setZip("")
+setService("")
+setDetails("")
+setHeard("")
+setConsent(false)
+
+}catch{
+
+setStatus("error")
+
+}
+
+}
+
+/* UI */
 
 return(
 
@@ -164,12 +187,8 @@ AVIEL MANAGEMENT INC
 <h1 className="text-6xl font-bold leading-tight">
 
 <span className="text-white">FREE</span>
-
 <br/>
-
-<span className="text-yellow-400">
-ESTIMATES
-</span>
+<span className="text-yellow-400">ESTIMATES</span>
 
 </h1>
 
@@ -228,43 +247,42 @@ Fill this out and we'll contact you shortly.
 
 <form onSubmit={handleSubmit} className="space-y-4">
 
+{/* honeypot spam trap */}
+
+<input
+type="text"
+value={honeypot}
+onChange={(e)=>setHoneypot(e.target.value)}
+className="hidden"
+/>
+
 <div className="grid grid-cols-2 gap-3">
 
-<div>
 <input
 placeholder="Full Name"
 value={name}
 onChange={(e)=>setName(e.target.value)}
 className="input"
 />
-{errors.name && <p className="error">{errors.name}</p>}
-</div>
 
-<div>
 <input
 placeholder="Phone"
 value={phone}
 onChange={(e)=>setPhone(formatPhone(e.target.value))}
 className="input"
 />
-{errors.phone && <p className="error">{errors.phone}</p>}
-</div>
 
 </div>
 
 <div className="grid grid-cols-2 gap-3">
 
-<div>
 <input
 placeholder="Email"
 value={email}
 onChange={(e)=>setEmail(e.target.value)}
 className="input"
 />
-{errors.email && <p className="error">{errors.email}</p>}
-</div>
 
-<div>
 <input
 placeholder="ZIP Code"
 value={zip}
@@ -272,12 +290,9 @@ maxLength={5}
 onChange={(e)=>setZip(e.target.value)}
 className="input"
 />
-{errors.zip && <p className="error">{errors.zip}</p>}
-</div>
 
 </div>
 
-<div>
 <select
 value={service}
 onChange={(e)=>setService(e.target.value)}
@@ -289,20 +304,14 @@ className="input"
 <option>Junk Removal & Demo</option>
 <option>Roofing</option>
 </select>
-{errors.service && <p className="error">{errors.service}</p>}
-</div>
 
-<div>
 <textarea
 placeholder="Project details"
 value={details}
 onChange={(e)=>setDetails(e.target.value)}
 className="input h-28"
 />
-{errors.details && <p className="error">{errors.details}</p>}
-</div>
 
-<div>
 <select
 value={heard}
 onChange={(e)=>setHeard(e.target.value)}
@@ -314,10 +323,8 @@ className="input"
 <option>Instagram</option>
 <option>Facebook</option>
 </select>
-{errors.heard && <p className="error">{errors.heard}</p>}
-</div>
 
-<label className="flex items-start gap-2 text-xs text-gray-400 leading-relaxed">
+<label className="flex items-start gap-2 text-xs text-gray-400">
 
 <input
 type="checkbox"
@@ -327,28 +334,25 @@ className="mt-1"
 />
 
 <span>
-By checking this box you agree to receive SMS messages from <strong>Aviel Management Inc</strong> regarding your estimate request, appointment scheduling, and project updates. Message frequency varies. Message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe.
+By checking this box you agree to receive SMS messages from
+<strong> Aviel Management Inc</strong>.
 </span>
 
 </label>
 
-{errors.consent && <p className="error">{errors.consent}</p>}
-
 <button
-disabled={status === "sending"}
+disabled={status==="sending"}
 className="submitButton"
 >
-{status === "sending"
-? "Sending..."
-: "Get My FREE Estimate"}
+{status==="sending" ? "Sending..." : "Get My FREE Estimate"}
 </button>
 
-{status === "success" &&
+{status==="success" &&
 <p className="text-green-400 text-sm">
 Your request was sent successfully.
 </p>}
 
-{status === "error" &&
+{status==="error" &&
 <p className="text-red-400 text-sm">
 Please fix the highlighted fields.
 </p>}
@@ -363,6 +367,6 @@ Please fix the highlighted fields.
 
 </div>
 
-);
+)
 
 }
